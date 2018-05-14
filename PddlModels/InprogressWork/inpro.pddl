@@ -75,7 +75,7 @@
 	(performing_activity ?wrt ?crmem ?loc)
 	(blocked_location ?loc)
 	(not(can_start_activity ?crmem ?wrt))
-	(not(activity_in_progress ?wrt ?crmem  ?loc ))
+	(not(activity_in_progress ?wrt ?crmem ))
 	(not(can_perform_activity_all ?crmem ))
 	(not(can_perform_activity ?wrt ?crmem ))
 	(not(activity_in_progress ?wrt ?crmem)))
@@ -106,7 +106,7 @@
         :parameters (?wrt - activity  ?wrt2 - activity ?crmem - crew_members ?loc - location)
 
         :precondition (and
-	(not(activity_in_progress ?wrt ?crmem  ?loc ))
+	(not(activity_in_progress ?wrt ?crmem ))
 	(not(can_start_activity ?crmem ?wrt))
 	(can_pause ?wrt ?wrt2)
 	(>=(rem_time_for_activity ?wrt ?crmem)30)
@@ -152,7 +152,7 @@
 	:condition(and 
 	(at start(>=(rem_time_for_activity ?wrt ?crmem)30))
 	(at start(not(activity_in_progress ?wrt ?crmem )))
-	(over all(activity_in_progress ?wrt ?crmem  ?loc ))
+	(over all(activity_in_progress ?wrt ?crmem ))
 	(at start(performing_activity ?wrt ?crmem ?loc))
 	(over all(performing_activity ?wrt ?crmem ?loc )) 
 	(at start(busy_crewmember ?crmem))
@@ -165,7 +165,7 @@
 
 	:effect(and
 	 (at end(decrease(rem_time_for_activity ?wrt ?crmem)30))
-	 (at start(activity_in_progress ?wrt ?crmem ?loc))
+	 (at start(activity_in_progress ?wrt ?crmem))
          (at end(not(activity_in_progress ?wrt ?crmem)))
 	 )
 )
@@ -222,9 +222,11 @@
 )
 
 (:action completing_day_2
-        :parameters (?day - days,?day1-days)
+        :parameters (?day - days)
         
-	:precondition (and(not(complete_day?day))(forall(?x - crew_members)(=(rem_time_today ?x)0))(=(day_in_progress)2))
+	:precondition (and(not(complete_day?day))
+	(and(forall(?x - crew_members)(=(rem_time_today ?x)0)))
+	(=(day_in_progress)2))
         
 	:effect (and(complete_day ?day))
 

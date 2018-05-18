@@ -4,7 +4,7 @@
 ;; REQUIREMENTS
 ;; =====
 
-(:requirements :fluents :typing :negative-preconditions :disjunctive-preconditions :equality :existential-preconditions :quantified-preconditions :conditional-effects )
+(:requirements :fluents :durative-actions :typing :negative-preconditions :disjunctive-preconditions :time :duration-inequalities  :timed-initial-literals :equality :existential-preconditions :quantified-preconditions :conditional-effects )
 
 ;; =====
 ;; TYPES
@@ -32,7 +32,6 @@
 	(day_in_progress ?day - days)
 	(schedule_in_progress ?crmem - crew_members)
 	(create_schedule_for_member ?crmem - crew_members ?day - days)
-	(planner_in_progress)
 )
 
 
@@ -63,7 +62,6 @@
 	(and(not(paused_activity ?wrt ?crmem ?loc))
 	(not(performing_activity ?wrt ?crmem ?loc))
         (>=(total_time_for_activity ?wrt ?day)0)))
-	(<= (total_time_for_activity_per_person ?wrt ?day) (total_time_for_activity ?wrt ?day))
 	(not(busy_crewmember ?crmem))
 	(not(blocked_location ?loc))
 	(>=(rem_time_today ?crmem)
@@ -73,7 +71,8 @@
 	:effect(and
 	(assign(rem_time_for_activity ?wrt ?crmem)
 	(total_time_for_activity_per_person ?wrt ?day))
-	(decrease(total_time_for_activity ?wrt ?day) (total_time_for_activity_per_person ?wrt ?day))
+	(decrease(total_time_for_activity ?wrt ?day)
+	(total_time_for_activity_per_person ?wrt ?day))
 	(performing_activity ?wrt ?crmem ?loc)
 	(blocked_location ?loc)
 	(not(can_start_activity ?crmem ?wrt))
@@ -129,7 +128,7 @@
 (:action resuming_activity 
 	:parameters (?wrt - activity ?crmem - crew_members ?loc - location )
 	
-	:precondition(and(schedule_in_progress ?crmem)
+	:precondition(and(day_in_progress)
 	(not(can_start_activity ?crmem ?wrt))
 	(or(can_perform_activity_all ?crmem)
 	(can_perform_activity ?wrt ?crmem))
@@ -148,49 +147,33 @@
 	(not(paused_activity ?wrt ?crmem ?loc)))
 )
 
-;(:durative-action continuing_activity
-;	:parameters(?wrt - activity ?crmem - crew_members ?loc - location)
-;	
-;	:duration(= ?duration 30)
-;
-;	:condition(and 
-;	(at start(schedule_in_progress ?crmem))
-;	(over all(schedule_in_progress ?crmem))
-;	(at end(schedule_in_progress ?crmem))
-;	(at start(>=(rem_time_for_activity ?wrt ?crmem)30))
-;	(at start(not(activity_in_progress ?wrt ?crmem )))
-;	(over all(activity_in_progress ?wrt ?crmem ))
-;	(at start(performing_activity ?wrt ?crmem ?loc))
-;	(over all(performing_activity ?wrt ?crmem ?loc )) 
-;	(at start(busy_crewmember ?crmem))
-;       (over all(busy_crewmember ?crmem))
-;	(at start(blocked_location ?loc))
-;       (over all(blocked_location ?loc))
-;	(at start(not(paused_activity ?wrt ?crmem ?loc)))	
-;	(over all(not(paused_activity ?wrt ?crmem ?loc)))	
-;	)
-
-;	:effect(and
-;	 (at end(decrease(rem_time_for_activity ?wrt ?crmem)30))
-;	 (at start(activity_in_progress ?wrt ?crmem))
-;         (at end(not(activity_in_progress ?wrt ?crmem)))
-;	 )
-;)
-
-(:action continuing_activity
+(:durative-action continuing_activity
 	:parameters(?wrt - activity ?crmem - crew_members ?loc - location)
 	
-	:precondition(and(schedule_in_progress ?crmem)
-         (>=(rem_time_for_activity ?wrt ?crmem)30)
-	(not(activity_in_progress ?wrt ?crmem ))
-	(performing_activity ?wrt ?crmem ?loc)
-	(performing_activity ?wrt ?crmem ?loc )
-	(busy_crewmember ?crmem)
-	(blocked_location ?loc)
-	(not(paused_activity ?wrt ?crmem ?loc))	
+	:duration(= ?duration 30)
+
+	:condition(and 
+	(at start(schedule_in_progress ?crmem))
+	(over all(schedule_in_progress ?crmem))
+	(at end(schedule_in_progress ?crmem))
+	(at start(>=(rem_time_for_activity ?wrt ?crmem)30))
+	(at start(not(activity_in_progress ?wrt ?crmem )))
+	(over all(activity_in_progress ?wrt ?crmem ))
+	(at start(performing_activity ?wrt ?crmem ?loc))
+	(over all(performing_activity ?wrt ?crmem ?loc )) 
+	(at start(busy_crewmember ?crmem))
+        (over all(busy_crewmember ?crmem))
+	(at start(blocked_location ?loc))
+        (over all(blocked_location ?loc))
+	(at start(not(paused_activity ?wrt ?crmem ?loc)))	
+	(over all(not(paused_activity ?wrt ?crmem ?loc)))	
 	)
 
-	:effect(and(decrease(rem_time_for_activity ?wrt ?crmem)30))
+	:effect(and
+	 (at end(decrease(rem_time_for_activity ?wrt ?crmem)30))
+	 (at start(activity_in_progress ?wrt ?crmem))
+         (at end(not(activity_in_progress ?wrt ?crmem)))
+	 )
 )
 
 (:action completing_day
@@ -217,9 +200,9 @@
 (:action starting_day_for_crewmember
         :parameters (?crmem - crew_members ?day - days)
         
-	:precondition (and(day_in_progress ?day)(not(planner_in_progress))(create_schedule_for_member ?crmem ?day))
+	:precondition (and(day_in_progress ?day)(create_schedule_for_member ?crmem ?day))
         
-	:effect (and(not(create_schedule_for_member ?crmem ?day))(planner_in_progress)(schedule_in_progress ?crmem)(assign(rem_time_today ?crmem)1440)
+	:effect (and(not(create_schedule_for_member ?crmem ?day))(schedule_in_progress ?crmem)(assign(rem_time_today ?crmem)1440)
 	(assign(time_spent_today ?crmem)0))
 )
 
@@ -228,7 +211,7 @@
 	
 	:precondition (and(schedule_in_progress ?crmem)(=(rem_time_today ?crmem)0))
 
-	:effect (and(not(schedule_in_progress ?crmem))(not(planner_in_progress))(increase(number_of_crew_members_with_task_complete)1))
+	:effect (and(not(schedule_in_progress ?crmem))(increase(number_of_crew_members_with_task_complete)1))
 )
 
 )

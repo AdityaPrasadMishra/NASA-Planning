@@ -1,0 +1,48 @@
+(define (problem Nasa_basic_model_prob01)
+(:domain Nasa_basic_model)
+
+;(:requirements :fluents :typing :negative-preconditions :disjunctive-preconditions :equality :existential-preconditions :quantified-preconditions :conditional-effects )
+
+(:objects
+        a  - crew_members
+        work  - activity
+        locA - location
+        day0 day1 day2 - days
+)
+
+(:init	
+   (not(busy_crewmember a))
+   
+   (not(blocked_location locA))
+
+   (=(number_of_crew_members)4)
+   (=(number_of_crew_members_with_task_complete)0)
+
+   (in_order day0 day1)
+
+   (in_order day1 day2)
+    
+   (complete_day day0)
+   
+   (can_start_activity a work)
+
+   (create_schedule_for_member a day1)
+
+   (create_schedule_for_member a day2)  	
+
+   (not(day_in_progress day1))
+  
+   (not(day_in_progress day2))
+  
+   (not(complete_day day1))
+
+   (not(complete_day day2))
+
+)
+
+(:goal (and(complete_day day1)(complete_day day2)
+)
+)
+
+)
+

@@ -1,7 +1,7 @@
 (define (problem Nasa_basic_model_prob01)
 (:domain Nasa_basic_model)
 
-(:requirements :fluents :typing :negative-preconditions :disjunctive-preconditions :equality :existential-preconditions :quantified-preconditions :conditional-effects )
+;;(:requirements :fluents :typing :negative-preconditions :disjunctive-preconditions :equality :existential-preconditions :quantified-preconditions :conditional-effects )
 
 (:objects
         a - crew_members

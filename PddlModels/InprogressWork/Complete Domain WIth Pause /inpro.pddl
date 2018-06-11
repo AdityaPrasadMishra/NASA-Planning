@@ -4,7 +4,7 @@
 ;; REQUIREMENTS
 ;; =====
 
-(:requirements :fluents :typing :negative-preconditions :disjunctive-preconditions :equality :existential-preconditions :quantified-preconditions :conditional-effects )
+(:requirements :adl :typing :negative-preconditions :disjunctive-preconditions :equality :existential-preconditions :quantified-preconditions :conditional-effects )
 
 ;; =====
 ;; TYPES
@@ -20,7 +20,7 @@
 	(can_perform_activity_all ?crmem - crew_members )
 	(in_order ?day1 - days ?day - days)
 	(can_start_activity ?crmem - crew_members ?wrt - activity)
-	(can_perform_activity ?wrt - activity ?crmem -crew_members )
+	(can_perform_activity ?wrt - activity ?crmem - crew_members )
 	(performing_activity ?wrt - activity ?crmem - crew_members ?loc - location)
 	(paused_activity ?wrt - activity ?crmem - crew_members ?loc - location)
 	(blocked_location ?loc - location)

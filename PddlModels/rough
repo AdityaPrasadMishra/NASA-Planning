@@ -1,3 +1,20 @@
+
+Type of Times -> start, Postsleep, Latemorning, Afternoon, Lateafternoon, Presleep, Night
+Type of activities -> Food, Experimentactivity, Communicationactivity, Loadingunloadingactivity, Exercise 
+Location -> LocA, LocB, LocC, LocD, LocE, LocF
+Crew -> A, B, C, D
+activities for each type
+	food -breakfast, lunch, dinner, 
+	experiments - exp1, 
+	excercise - t1exercise,
+	loadunload - loading,unloading
+	communication - communicating
+
+levels - l1,l2,l3,l4,l5,l6,l7,l8,l9,l10
+
+
+
+
 (:action starting_activity 
 	:parameters (?wrt1 - activity ?wrt - activity ?crmem - crew_members ?loc - location ?day - days)
 	
@@ -113,7 +130,25 @@
 		(complete_day ?day))
 )
 
+(doingactivitywithtwocrewmember ?levelvar - levels ?actvar - activity ?crew1 - crew ?crew2 - crew )
+(doingeactivitywiththreecrewmember ?levelvar - levels ?actvar - activity ?crew1 - crew ?crew2 - crew ?crew3 - crew )
 
+
+(Havingfood ?time - times ?food - foods ?loc - location ?crew1 - crew)
+
+(doingexperimentwithonecrewmember ?time - times  ?actvar - activity ?acttyep - activitytype ?crew1 - crew )
+(doingexperimentwithtwocrewmember ?time - times ?actvar - activity ?acttyep - activitytype ?crew1 - crew ?crew2 - crew )
+(doingexperimentwiththreecrewmember ?time - times ?actvar - activity ?acttyep - activitytype ?crew1 - crew ?crew2 - crew ?crew3 - crew )
+
+(doingcommunicationactivitywithonecrewmember ?time - times ?actvar - activity  ?acttyep - activitytype ?crew1 - crew )
+(doingcommunicationactivitywithtwocrewmember ?time - times ?actvar - activity ?acttyep - activitytype ?crew1 - crew ?crew2 - crew )
+(doingcommunicationactivitywiththreecrewmember ?time - times ?actvar - activity ?acttyep - activitytype ?crew1 - crew ?crew2 - crew ?crew3 - crew )
+
+(doingloadingunloadingactivitywithonecrewmember ?time - times ?actvar - activity ?acttyep - activitytype ?crew1 - crew )
+(doingloadingunloadingactivitywithtwocrewmember ?time - times ?actvar - activity ?acttyep - activitytype ?crew1 - crew ?crew2 - crew )
+(doingloadingunloadingactivitywiththreecrewmember ?time - times ?actvar - activity ?acttyep - activitytype ?crew1 - crew ?crew2 - crew ?crew3 - crew )
+
+(sleeping ?time - times ?loc - location)
 
 
 

@@ -48,13 +48,14 @@
 	(blockedlocation ?loc - location)
 	
 	(onecrewmemberforexperiments ?actvar - activity)
-	(twocrewmemberforexperiments ?actvar- activity)
-	(threecrewmemberforexperiments ?actvar- activity)
-	(fourcrewmemberforexperiments ?actvar- activity)
+	(twocrewmemberforexperiments ?actvar - activity)
+	(threecrewmemberforexperiments ?actvar - activity)
+	(fourcrewmemberforexperiments ?actvar - activity)
 
 	(firstcrewmember ?crew1 - crew)
 	(lastcrewmember ?crew1 - crew)
 
+	(changelevel ?crew1 - crew)
 )
 
 
@@ -70,10 +71,10 @@
 )
 
 (:action EndingDay
-	:parameters(?times - time ?crew1 - crew)
+	:parameters(?time - times ?crew1 - crew)
 	:precondition(and(lasttime ?time)
 			(timecompleted ?time)
-			(not((daycompleted))
+			(not(daycompleted))
 			(daystarted)
 			)
 	:effect(and(daycompleted))
@@ -92,12 +93,13 @@
 )
 
 (:action EndPeriodOfDay 
-	:parameters (?time - times ?level - levels ?crew1 - crew)
+	:parameters (?time - times ?levelvar - levels ?crew1 - crew)
 	:precondition (and
 			(daystarted)
 			(timeinprogress ?time)
 			(lastcrewmember ?crew1)
-			(currentlevel ?level ?crew1)
+			(not(changelevel ?crew1)
+			(currentlevel ?levelvar ?crew1)
 			(levelsforTime ?levelvar ?time )
 			)
 	:effect (and(not(timeinprogress ?time))(timecompleted ?time))
@@ -107,14 +109,14 @@
 	:parameters(?level1 - levels ?level2 - levels ?crew1 - crew ?crew2 - crew)
 	:precondition(and
 			(changelevel ?crew1)
-			(not(firstcrewmmeber ?crew1))
+			(not(firstcrewmember ?crew1))
 			(inordercrew ?crew2 ?crew1)
 			(inorderlevel ?level1 ?level2)
 			(currentlevel ?level1 ?crew1)
 			(currentlevel ?level2 ?crew2)
 			)
 	:effect (and(currentlevel ?level2 ?crew1)
-			(not changelevel ?crew1)
+			(not(changelevel ?crew1))
 			(not(currentlevel ?level1 ?crew1)))
 )
 
@@ -122,12 +124,12 @@
 	:parameters(?level1 - levels ?level2 - levels ?crew1 - crew)
 	:precondition(and
 			(changelevel ?crew1)
-			(firstcrewmmeber ?crew1)
+			(firstcrewmember ?crew1)
 			(inorderlevel ?level1 ?level2)
 			(currentlevel ?level1 ?crew1)
 			)
 	:effect (and(currentlevel ?level2 ?crew1)
-			(not changelevel ?crew1)
+			(not(changelevel ?crew1))
 			(not(currentlevel ?level1 ?crew1)))
 )
 
@@ -165,7 +167,8 @@
 	:effect(and
 		(not(busycrewmember ?crew1))	
 		(not(blockedlocation ?loc))
-		(activitycompleted ?actvar ?crew1 ?loc)
+		(activitycompleted ?actvar ?crew1)
+		(not(activityinprogress ?actvar ?crew1 ?loc))
 		(changelevel ?crew1))
 
 )
@@ -213,8 +216,10 @@
 			(levelsforactivity ?levelvar ?actvar)
 			)
 	:effect(and
-		(activitycompleted ?actvar ?crew1 ?loc)
-		(activitycompleted ?actvar ?crew2 ?loc)
+		(activitycompleted ?actvar ?crew1)
+		(activitycompleted ?actvar ?crew2)
+		(not(activityinprogress ?actvar ?crew1 ?loc))
+		(not(activityinprogress ?actvar ?crew2 ?loc))
 		(changelevel ?crew1)
 		(changelevel ?crew2)
 		(not(busycrewmember ?crew1))
@@ -275,9 +280,12 @@
 			(levelsforactivity ?levelvar ?actvar)
 			)
 	:effect(and
-		(activitycompleted ?actvar ?crew1 ?loc)
-		(activitycompleted ?actvar ?crew2 ?loc)
-		(activitycompleted ?actvar ?crew3 ?loc)
+		(activitycompleted ?actvar ?crew1 )
+		(activitycompleted ?actvar ?crew2 )
+		(activitycompleted ?actvar ?crew3 )
+		(not(activityinprogress ?actvar ?crew1 ?loc))
+		(not(activityinprogress ?actvar ?crew2 ?loc))
+		(not(activityinprogress ?actvar ?crew3 ?loc))
 		(changelevel ?crew1)
 		(changelevel ?crew2)
 		(changelevel ?crew3)
@@ -330,7 +338,7 @@
 	:parameters(?levelvar - levels  ?actvar - activity ?crew1 - crew ?crew2 - crew ?crew3 - crew ?crew4 - crew ?loc - Location)
 	:precondition(and
 			(not(changelevel ?crew1))
-			(four crewmemberforexperiments ?actvar )
+			(fourcrewmemberforexperiments ?actvar )
 			(activityinprogress ?actvar ?crew1 ?loc)
 			(activityinprogress ?actvar ?crew2 ?loc)
 			(activityinprogress ?actvar ?crew3 ?loc)
@@ -351,10 +359,14 @@
 			(levelsforactivity ?levelvar ?actvar)
 			)
 	:effect(and
-		(activitycompleted ?actvar ?crew1 ?loc)
-		(activitycompleted ?actvar ?crew2 ?loc)
-		(activitycompleted ?actvar ?crew3 ?loc)
-		(activitycompleted ?actvar ?crew4 ?loc)
+		(activitycompleted ?actvar ?crew1 )
+		(activitycompleted ?actvar ?crew2 )
+		(activitycompleted ?actvar ?crew3 )
+		(activitycompleted ?actvar ?crew4 )
+		(not(activityinprogress ?actvar ?crew1 ?loc))
+		(not(activityinprogress ?actvar ?crew2 ?loc))
+		(not(activityinprogress ?actvar ?crew3 ?loc))
+		(not(activityinprogress ?actvar ?crew4 ?loc))
 		(not(busycrewmember ?crew1))
 		(not(busycrewmember ?crew2))
 		(not(busycrewmember ?crew3))

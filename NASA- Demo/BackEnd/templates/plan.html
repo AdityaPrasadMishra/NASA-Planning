@@ -1,0 +1,492 @@
+<div id="plan"> 
+
+    <div class="row" style="height=100%">
+        <div class="col">
+            <div class="card bg-light mb-3" style="max-width: 100%;">
+     
+                <div class="card-header">
+                    Interactive Plan Of Study
+                </div>
+
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        Time Remaining 
+                        <span class="badge badge-pill badge-secondary text-right" id="countdown"></span>
+                    </li>
+                    <li class="list-group-item">
+                        Total Money Spent 
+                        <span class="badge badge-pill badge-secondary text-right" id="money">$$$</span>
+                    </li>
+                    <li class="list-group-item">
+                        Average Difficulty 
+                        <span class="badge badge-pill badge-secondary text-right" id="difficulty">3</span> courses/semester
+                    </li>
+                </ul>
+     
+                <div class="card-body">
+                    
+                    <div class="container" id="plan-utils">
+
+                        <div class="row mb-2">
+                            <div class='col'>
+                                <button type="button" class="col-md-12 btn btn-outline-dark" id="validatePlan">
+                                    Validate
+                                </button>
+                            </div>
+                            <div class='col'>
+                                <div class="row mb-2">
+                                    <button type="button" class="col-md-12 btn btn-outline-dark" id="suggestPlan">
+                                        Suggest
+                                    </button>
+                                </div>
+                                <div class="row mb-2">
+                                    <button type="button" class="col-md-12 btn btn-outline-success" id="explainPlan">
+                                        Explain
+                                    </button>
+                                </div>
+                            </div>
+                        </div><!-- row ends -->
+
+                        <div class="row">
+                            <div class="container">
+                                <div class="alert alert-danger alert-block" role="alert" id="valFeedback">
+                                </div>
+                                <div class="alert alert-success alert-block" role="alert" id="mrpFeedback">
+                                </div>
+                            </div>
+                        </div><!-- row ends -->
+                    </div>
+                    
+                    <div class='row'>
+                        <div class='col'>
+                            <div class='grid-stack'>
+                                <!-- Plans happens here -->
+                            </div>
+                        </div>
+                    </div><!-- row ends -->
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+
+$('[data-toggle="tooltip"]').tooltip();
+$('[data-toggle="popover"]').tooltip();
+
+
+$("#valFeedback").hide();
+$("#mrpFeedback").hide();
+$("#undoPlan").hide();
+$("#explainPlan").hide();
+
+$.extend({
+    redirectPost: function(location, args)
+    {
+        var form = $('<form></form>');
+        form.attr("method", "post");
+        form.attr("action", location);
+
+        $.each( args, function( key, value ) {
+            var field = $('<input></input>');
+
+            field.attr("type", "hidden");
+            field.attr("name", key);
+            field.attr("value", value);
+
+            form.append(field);
+        });
+        $(form).appendTo('body').submit();
+    }
+});
+    
+$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+
+$(function () {
+
+    $('.addButton').click( function() {
+
+        var elem = $(this).parent().siblings(' .form-control ').find( 'button' );
+        var ss = 'Add ' + elem.attr('id').replace('List', '').charAt(0).toUpperCase() + elem.attr('id').replace('List', '').slice(1) + ' - ' + elem.html().trim();
+
+        updateData(ss);
+
+    });
+    
+    
+    
+    // Remove any status bar (and explanation/undo buttons) at the start of some call.
+    function hide_all_feedback() {
+        $("#valFeedback").hide();
+        $("#mrpFeedback").hide();
+        $("#undoPlan").hide();
+        $("#explainPlan").hide();
+        $("#valAlertNegative").hide();
+        $("#valAlertPositive").hide();
+        $("#submit").hide();
+    }
+    
+    // method :: check iPOS
+    $('#check').click( function() {
+        
+        res = getGridStackData();
+        hide_all_feedback()
+        
+        // New ajax call to validate plan
+        $.getJSON($SCRIPT_ROOT + '/check', {
+
+            'plan' : JSON.stringify( res )
+
+        }, function(data) {
+            
+            is_plan_complete = data[ 'status' ]
+            enable_check_feedback( is_plan_complete )
+
+        })
+        .error( function() {
+
+            // On failure, alert front-end user of server side error.
+            alert('Server side error when checking plan!')
+
+        });
+
+    });
+
+    function enable_check_feedback( is_plan_complete ){
+        if ( is_plan_complete ) {
+
+            $("#valAlertPositive").show();
+            $("#submit").show();
+
+        } else {
+
+            $("#valAlertNegative").show();
+
+        }
+
+    }
+    
+    // method :: submit iPOS
+    $('#submit').click( function() {
+
+        $( ".grid-stack" ).removeClass( "grid-stack" );
+
+        $( ".delete-action" ).each( function( index ) {
+            $(this).parent().remove();
+        });
+
+        $("#info").addClass("fade-to-back");
+        $("#info *").attr("disabled", "disabled").off('click');
+
+        $("#plan-utils").addClass("fade-to-back");
+        $("#plan-utils *").attr("disabled", "disabled").off('click');
+
+        $("#add2plan").hide();
+        $("#feedback").show();
+
+        $('html, body').animate({
+            scrollTop: $("#feedback").offset().top
+        }, 2000);
+
+    });
+    
+    getGridStackData = function() {
+        var res = _.map( $('.grid-stack > .grid-stack-item:visible'), function(el) {
+            el = $(el)
+            var node = el.data('_gridstack_node');
+            return {
+                name : node.el[0]['innerText'],
+                x : node.x,
+                y : node.y,
+                width : node.width,
+                height: node.height
+            };
+        });
+        return res;
+    };
+
+    $('#validatePlan').click( function() {
+        res = getGridStackData();
+        hide_all_feedback();       
+
+        // New ajax call to validate plan
+        $.getJSON($SCRIPT_ROOT + '/validate', {
+
+            'plan' : JSON.stringify( res )
+
+        }, function(data) {
+
+            // On success, update planning panel and show feedback divs.
+            is_valid = data[ 'status' ]
+            validated_plan = data[ 'plan' ]
+            enable_val_feedback( is_valid )
+            render_updated_plan( validated_plan );
+
+        })
+        .error( function() {
+
+            // On failure, alert front-end user of server side error.
+            alert('Server side error when validating plan!')
+
+        });
+    })
+
+    // Show status bar to indicate the validity of a plan
+    function enable_val_feedback( success ) {
+
+        $( "#valFeedback" ).show();
+        $( "#valFeedback" ).removeClass( "alert-danger" );
+        $( "#valFeedback" ).removeClass( "alert-success" );
+
+        if ( success ) {
+
+            $( "#valFeedback" ).addClass( "alert-success" );
+            $( "#valFeedback" ).html( "So far so good! :)" );
+
+        } else {
+
+            $( "#valFeedback" ).addClass( "alert-danger" );
+            $( "#valFeedback" ).html( "This is not part of a valid iPOS! :(" );
+
+        }
+
+    };
+
+    $('#suggestPlan').click( function() {
+
+        res = getGridStackData();
+        hide_all_feedback();
+
+        // New ajax call to suggest plan completion
+        $.getJSON($SCRIPT_ROOT + '/suggest', {
+        
+                'plan' : JSON.stringify( res )
+
+            }, function(data) {
+
+                plan_found = data['status']
+                suggested_plan = data['plan']                
+                
+                render_updated_plan( suggested_plan )
+                enable_suggest_feedback( plan_found )
+
+            })
+            .error( function() {
+
+                // On failure, alert front-end user of server side error.
+                alert('Server side error when finding a plan!')
+
+            });
+        })
+
+    // Show status message and explanation button if plan completion occurs.
+    function enable_suggest_feedback( plan_found ) {
+
+        $( "#mrpFeedback" ).show();
+        $( "#mrpFeedback" ).removeClass( "alert-danger" );
+        $( "#mrpFeedback" ).removeClass( "alert-success" );
+
+        if ( plan_found ) {
+
+            $("#undoPlan").show();
+            $("#explainPlan").show();
+
+            $( "#mrpFeedback" ).addClass( "alert-success" );
+            $( "#mrpFeedback" ).html( "Plan found! :)" );
+
+        } else {
+
+            $( "#mrpFeedback" ).addClass( "alert-danger" );
+            $( "#mrpFeedback" ).html( "No plan could be found! :(" );
+
+        }
+
+    };
+    
+    $('#explainPlan').click(function() {
+
+        res = getGridStackData();
+        hide_all_feedback()
+        
+        $.getJSON($SCRIPT_ROOT + '/getPlanExplanation', {
+        
+            'plan' : JSON.stringify(res)
+        
+        }, function(data) {
+            
+            console.log( data )
+            $( ".explain-action" ).each( function( index ) {
+                $( this ).show();
+            });
+            
+        });
+        
+    });    
+
+    // thanks to http://stackoverflow.com/a/22885503
+    var waitForFinalEvent=function(){var b={};return function(c,d,a){a||(a="I am a banana!");b[a]&&clearTimeout(b[a]);b[a]=setTimeout(c,d)}}();
+
+    var fullDateString = new Date();
+    function isBreakpoint(alias) {
+        return $('.device-' + alias).is(':visible');
+    }
+
+    var options = {
+        float: false
+    };
+
+    $('.grid-stack').gridstack(options);
+
+    function resizeGrid() {
+        var grid = $('.grid-stack').data('gridstack');
+        if (isBreakpoint('xs')) {
+            $('#grid-size').text('One column mode');
+        } else if (isBreakpoint('sm')) {
+            grid.setGridWidth(3);
+            $('#grid-size').text(3);
+        } else if (isBreakpoint('md')) {
+            grid.setGridWidth(6);
+            $('#grid-size').text(6);
+        } else if (isBreakpoint('lg')) {
+            grid.setGridWidth(12);
+            $('#grid-size').text(12);
+        }
+    };
+
+    $(window).resize( function () {
+        waitForFinalEvent(function() {
+            resizeGrid();
+        }, 300, fullDateString.getTime());
+    });
+    
+    // call backend to get serialized data
+    serializedData = [
+        {% set count = 1 %}
+        {% for key, value in plan.iteritems() %}
+            {y: {{ key }}, x: 0, width: 12, height: 1, name:'{{ value }}'},
+            {% set count = count + 1 %}
+        {% endfor %}
+    ];
+
+    // Called if ajax call successfully returns a validated/suggested plan.
+    // Renders the gridstack with new information.
+    function render_updated_plan( updated_plan ) {
+        serializedData = [];
+        for (var i in updated_plan) {
+            serializedData.push( {y:i, x:0, width:12, height:1, name:updated_plan[i]} );
+        }
+        loadGrid();
+        resizeGrid();
+    };
+    
+    function updateData(action) {
+    
+        res = getGridStackData();
+        hide_all_feedback();
+        
+        max_action = -1;
+        for (var i in res) {
+            action_val = res[i]['y']
+            if(action_val > max_action) {
+                max_action = action_val;
+            }
+        }
+        
+        serializedData = res
+        serializedData.push({y:max_action+1, x:0, width:12, height: 1, name:action});
+        loadGrid();
+        resizeGrid();
+        
+    };
+    
+    grid = $('.grid-stack').data('gridstack');
+
+    loadGrid = function () {
+
+        grid.removeAll();
+
+        var widgetHTML =   '<div> \
+                                <div class="grid-stack-item-content" data-gs-no-resize="true"> \
+                                    <div class="input-group input-group-sm"> \
+                                        <div class="form-control bg-light align-midmiddle"> \
+                                            <span>[DISPLAY]</span> \
+                                        </div> \
+                                        <div class="input-group-append"> \
+                                            <button class="btn btn-success explain-action" data-toggle="popover" title="Details" data-content="[EXPLAIN]"> \
+                                                <i class="fas fa-question"></i> \
+                                            </button> \
+                                            <button class="btn btn-outline-danger delete-action" type="button"> \
+                                                <i class="fas fa-times"></i> \
+                                            </button> \
+                                        </div> \
+                                    </div> \
+                                </div> \
+                            </div>';
+
+        var elem = null;
+
+        var items = GridStackUI.Utils.sort(this.serializedData);
+
+        _.each(items, function (node, i) {
+
+            // planner added actions
+            if (node.name.includes(';--')) {
+
+                action_name = '<i class="fas fa-plus-circle"></i>&nbsp;' + node.name.substr(0, node.name.indexOf(';'));
+                reason = node.name.substr(node.name.indexOf(';'), node.name.length);
+                elem = $(widgetHTML.replace('[DISPLAY]', action_name).replace('[EXPLAIN]', reason));
+                elem.find('.form-control').addClass('text-success');                
+
+            } 
+
+            // invalid actions
+            else if (node.name.includes(';')) {
+                
+                action_name = '<i class="fas fa-exclamation-triangle"></i>&nbsp;' + node.name.substr(0, node.name.indexOf(';'));
+                elem = $(widgetHTML.replace('[DISPLAY]', action_name).replace('[EXPLAIN]', ''));
+                elem.find('.form-control').addClass('text-danger');
+
+                $( "#valFeedback" ).append( "<br><br>" + node.name.split(";")[1] );
+                
+            }
+
+            // human added actions
+            else {
+
+                elem = $(widgetHTML.replace('[DISPLAY]', node.name).replace('[EXPLAIN]', ''));
+
+            }
+
+            elem.find('.explain-action').hide();
+            elem.find('.explain-action').popover({
+                container: 'body'
+            });
+
+            grid.addWidget(elem, node.x, node.y, node.width, node.height);
+
+        });
+
+        return false;
+
+    };
+    
+    // remove action
+    $('body').on('click', '.delete-action', function() {
+        // Remove the gridstack div
+        $('.grid-stack').data('gridstack').removeWidget($(this).parent().parent().parent().parent());
+        
+        // Make sure element is removed from the gridstack object
+        res = getGridStackData();
+        serializedData = res
+        loadGrid();
+        resizeGrid();
+    });
+
+    loadGrid();
+    resizeGrid();
+    
+});
+</script>

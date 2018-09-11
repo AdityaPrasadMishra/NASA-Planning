@@ -1,0 +1,92 @@
+/*
+Custom styles from Tathagata
+*************/
+
+/* navbar area */
+
+.navbar {
+    justify-content: center;
+}
+
+.nav-item {
+    color: #f9b42e;
+    font: icon;
+    font-weight: bold;
+}
+
+.nav-item > strong {
+    color: #941037;
+}
+
+
+/* font-awesome */
+
+.fas.fa-check {
+    color: green;
+}
+
+#info .fas.fa-times {
+    color: red;
+}
+
+ /* input area */
+
+.form-control > button {
+    border-color: white;
+}
+
+#add2plan .card {
+    border: none;
+}
+
+
+/* feedback area */
+
+.fade-to-back {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.likert .list-group-item {
+    cursor: pointer;
+}
+
+#feedback .form-control {
+    height: 360px;
+}
+
+/* plan elements */
+
+.disabled-button {
+    cursor: not-allowed; 
+}
+
+.card-body {
+    background-color: white;
+}
+
+.grid-stack-item-content {
+    background-color: white!important;
+}
+
+.add-action:hover {
+    pointer:move!important;
+}
+
+.align-midmiddle {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.alert-block {
+    width: 100%;
+    padding: 5px;
+    padding-left: 10px;
+}
+
+.end {
+    height: 100%;
+    width: 100%;
+}

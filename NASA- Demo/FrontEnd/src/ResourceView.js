@@ -47,12 +47,14 @@ class ResourceView extends Component {
         });
 
         return (
+            <div>
             <div style={{paddingBottom: paddingBottom}}>
                 <table className="resource-table">
-                    <tbody>
-                        {resourceList}
+                <tbody>
+                {resourceList}                                 
                     </tbody>
                 </table>
+            </div>
             </div>
         )
     }

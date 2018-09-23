@@ -1,4 +1,42 @@
 const DemoData = {
+    typeofevents:[
+        {
+            id:'Type00',
+            name: 'Normal',
+        },
+        {
+            id:'Type01',
+            name: 'Type01',
+        },
+        {
+            id:'Type02',
+            name: 'Type02',
+        }, 
+        {
+            id:'Type03',
+            name: 'Type03',
+        }
+
+    ],
+    CrewMembers:[
+        {
+            id:'1',
+            name: 'CrewMember-1',
+        },
+        {
+            id:'2',
+            name: 'CrewMember-2',
+        },
+        {
+            id:'3',
+            name: 'CrewMember-3',
+        }, 
+        {
+            id:'4',
+            name: 'CrewMember-4',
+        }
+
+    ],
     resources: [
         {
             id: 'r1',
@@ -17,6 +55,13 @@ const DemoData = {
             name: 'CrewMember-4',
         }
     ],
+    tasks:[
+        {   
+            id:1,
+            eventids:[1,2,3],
+            color:'#D9D9D9'
+        }
+    ],
     events: [
         {
             id: 1,
@@ -24,7 +69,8 @@ const DemoData = {
             end: '2017-12-19 23:30:00',
             resourceId: 'r1',
             title: 'I am finished',
-            bgColor: '#D9D9D9'
+            bgColor: '#D9D9D9',
+            taskid: 1
         },
         {
             id: 2,
@@ -32,7 +78,8 @@ const DemoData = {
             end: '2017-12-26 23:30:00',
             resourceId: 'r2',
             title: 'I am not resizable',
-            resizable: false
+            resizable: false,
+            taskid: 1
         },
         {
             id: 3,
@@ -40,7 +87,8 @@ const DemoData = {
             end: '2017-12-20 23:30:00',
             resourceId: 'r3',
             title: 'I am not movable',
-            movable: false
+            movable: false,
+            taskid: 1
         },
         {
             id: 4,

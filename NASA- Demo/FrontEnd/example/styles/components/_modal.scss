@@ -21,7 +21,7 @@
 .modal{
     background: $light-blue;
     color:white;
-    max-width: 30rem;
+    max-width: 70rem;
     outline:none;
     padding:$l-size;
     text-align:center;
@@ -35,7 +35,29 @@
 
 .modal__body{
     font-size: 2rem;
-    font-weight: 300;
+    font-weight: 100;
+    margin: 0 0  $l-size 0;
+    word-break: break-all;
+}
+
+.bigmodal{
+    background: $off-blue;
+    color:black;
+    max-width: 1oorem;
+    outline:none;
+    padding:$l-size;
+    text-align:center;
+}
+
+.bigmodal__title{
+    margin: 0 0  $m-size 0;
+
+
+}
+
+.bigmodal__body{
+    font-size: 1.5rem;
+    font-weight: 100;
     margin: 0 0  $l-size 0;
     word-break: break-all;
 }

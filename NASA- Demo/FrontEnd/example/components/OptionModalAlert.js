@@ -3,7 +3,7 @@ import Modal from 'react-modal';
 
 const OptionModalAlert = (props) => (
 <Modal isOpen={!!props.insText} 
-contentLabel={props.label}
+contentLabel={props.insText}
 onRequestClose={props.handleClearAlertConfirmtext}
 closeTimeoutMS={200}
 className="modal"

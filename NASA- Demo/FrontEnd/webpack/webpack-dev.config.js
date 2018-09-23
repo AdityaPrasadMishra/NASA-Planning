@@ -5,7 +5,7 @@ module.exports = {
   mode:'development',
   entry: {
     'basic': [
-      'webpack-dev-server/client?http://localhost:8080/',
+      'webpack-dev-server/client?http://10.218.107.216:8080/',
       'webpack/hot/only-dev-server',
       './example/bundle.js'
     ]
@@ -13,7 +13,7 @@ module.exports = {
   output: {
     path: __dirname,
     filename: "bundle.js",
-    publicPath: 'http://localhost:8080/',
+    publicPath: 'http://10.218.107.216:8080/',
     chunkFilename: '[id].chunk.js',
     sourceMapFilename: '[name].map'
   },

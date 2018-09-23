@@ -234,16 +234,18 @@ class Scheduler extends Component {
                                     onClick={this.goNext}/>
                         </div>
                     </Col>
-                    <Col>
-                        <RadioGroup defaultValue={defaultValue} size="default" onChange={this.onViewChange}>
-                            {radioButtonList}
-                        </RadioGroup>
-                    </Col>
+
                     {rightCustomHeader}
                 </Row>
             );
         }
 
+        // place it in the below col to make calendar work
+//         <Col>
+//         <RadioGroup defaultValue={defaultValue} size="default" onChange={this.onViewChange}>
+//             {radioButtonList}
+//          </RadioGroup>
+//    </Col>
         return (
             <table className="scheduler" style={{width: width}}>
                 <thead>

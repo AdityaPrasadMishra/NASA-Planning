@@ -32,7 +32,7 @@
     "build": "npm run clean && babel src --out-dir lib && cpy src/css/style.css lib/css",
     "clean:exampledist": "rimraf ./exampledist/static",
     "build:exampledist": "npm run clean:exampledist && cpy src/css/style.css exampledist/static && cross-env NODE_ENV=production webpack --config ./webpack/webpack.config.js",
-    "example": "webpack-dev-server --config ./webpack/webpack-dev.config.js --hot",
+    "example": "webpack-dev-server --config ./webpack/webpack-dev.config.js --hot --host 10.218.107.216",
     "analyz": "cross-env NODE_ENV=production npm_config_report=true npm run build",
     "build:dll": "cross-env NODE_ENV=production webpack --config ./webpack/webpack.dll.config.js"
   },
@@ -49,6 +49,7 @@
     "react-dnd-html5-backend": "^2.6.0",
     "react-dom": "^16.3.1",
     "react-modal": "^3.5.1",
+    "react-select": "^2.0.0",
     "rrule": "^2.2.9"
   },
   "devDependencies": {

@@ -6,11 +6,13 @@
         locA locB locC locD locE locF - location
 )
 (:init
-    (=(rem_time_today_forall)48)
-    (=(rem_time_today a)12)
-    (=(rem_time_today b)12)
-    (=(rem_time_today c)12)
-    (=(rem_time_today d)12)
+    (=(rem_time_today_forall)8)
+    (=(rem_time_today a)2)
+    (=(rem_time_today b)2)
+    (=(rem_time_today c)2)
+    (=(rem_time_today d)2)
+(=(decreaseintime)2)
+	(=(cannotbeusedtill)4)
 
     (=(number_of_crew_members breakfast)0)
     (=(number_of_crew_members normalwork1)0)

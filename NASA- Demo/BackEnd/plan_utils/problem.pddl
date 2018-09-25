@@ -1,17 +1,20 @@
 (define (problem Nasa_strips_advanced_model_prob01)
 (:domain Nasa_strips_advanced_model_withSoftConstraints)
 (:objects
-        a b c d - crew
+        CrewMember-1 CrewMember-2 CrewMember-3 CrewMember-4 - crew
         breakfast normalwork1 normalwork2 dinner meditation sleep lunch loading unloading t1exercise t2exercise mutationexp xrayexp communication xrayexp2 communication2 takephoto repairshuttle - activity
         locA locB locC locD locE locF - location
 )
 (:init
-    (=(rem_time_today_forall)48)
-    (=(rem_time_today a)12)
-    (=(rem_time_today b)12)
-    (=(rem_time_today c)12)
-    (=(rem_time_today d)12)
-
+    (=(rem_time_today_forall)16)
+    (=(rem_time_today CrewMember-1)4)
+    (=(rem_time_today CrewMember-2)4)
+    (=(rem_time_today CrewMember-3)4)
+    (=(rem_time_today CrewMember-4)4)
+	(useonlyonceforcleanup)
+(=(decreaseintime)2)
+(=(revecountcannotbeusedtill)0)
+	(=(cannotbeusedtill)4)
     (=(number_of_crew_members breakfast)0)
     (=(number_of_crew_members normalwork1)0)
     (=(number_of_crew_members normalwork2)0)
@@ -67,17 +70,16 @@
     (typeofactivitynormal xrayexp2)
     (typeofactivitytype0 communication2)
     
-    (currentcrewmember a)
-    (inordercrew a b)
-    (inordercrew b c)
-    (inordercrew c d)
-    (inordercrew d a)
+    (currentcrewmember CrewMember-1)
+    (inordercrew CrewMember-1 CrewMember-2)
+    (inordercrew CrewMember-2 CrewMember-3)
+    (inordercrew CrewMember-3 CrewMember-4)
+    (inordercrew CrewMember-4 CrewMember-1)
 
 )
 
 
 (:goal(and(daycompleted)
-(activitycompleted communication2)
 )
 
 )

@@ -37,7 +37,6 @@
 	(activated_activity_forcrew ?wrt  - activity)
 	(activitycompleted ?wrt - activity)
 	(activityinprogress)
-	(recentlyused ?crmem - crew)
 )
 
 ;; =====
@@ -49,8 +48,6 @@
 	(rem_time_today ?crmem - crew)
 	(number_of_crew_members ?wrt - activity)
 	(max_crewmember_for_activity ?wrt - activity)
-	(decreaseintime)
-	(cannotbeusedtill)
 )
 
 ;; =====
@@ -63,13 +60,6 @@
 	:effect (and(daystarted))
 )
 
-(:action cleanrrecentlyused 
-	:parameters(?crmem - crew)
-	:precondition(and(=(cannotbeusedtill)0)(recentlyused ?crmem))
-	:effect(and(not(recentlyused ?crmem))(increase(cannotbeusedtill)4))
-
-)
-
 (:action starting_activity_normal 
 	:parameters (?wrt - activity ?loc - location )
 	
@@ -77,7 +67,6 @@
 	(daystarted)
 	(not(activitycompleted ?wrt))
 	(not(activityinprogress))
-	(not(recentlyused ?crmem))
 	(typeofactivitynormal ?wrt)
 	(not(blocked_location ?loc)))
 	
@@ -132,8 +121,8 @@
 	:effect(and
 		(assign_crewmember ?crmem ?wrt)	
 		(busy_crewmember ?crmem)
-		(decrease(rem_time_today ?crmem)(decreaseintime))
-		(decrease(rem_time_today_forall)(decreaseintime))
+		(decrease(rem_time_today ?crmem)2)
+		(decrease(rem_time_today_forall)2)
 		(increase(number_of_crew_members ?wrt)1)	
 		)
 )
@@ -167,7 +156,6 @@
 				(not(assign_crewmember ?crmem ?wrt))
 				(not(busy_crewmember ?crmem))
 				(decrease(number_of_crew_members ?wrt)1)
-				(decrease(cannotbeusedtill)1)
 				)
 )
 

@@ -71,8 +71,8 @@ class Basic extends Component{
         if(this.state.sessionstoredobject === undefined || this.state.sessionstoredobject == null || this.state.sessionstoredobject.resources === undefined)
         {
             schedulerData1.setResources(DemoData.resources);
-            schedulerData1.setEvents(DemoData.events);
-            schedulerData1.setTasks(DemoData.tasks);
+            //schedulerData1.setEvents(DemoData.events);
+            //schedulerData1.setTasks(DemoData.tasks);
         }
         else
         {
@@ -118,6 +118,12 @@ class Basic extends Component{
     validateClick(sessionobject,e){
         //console.log(JSON.stringify(sessionobject));
         console.log("Clicked Validate");
+        let schedulerData = this.state.viewModel;
+        schedulerData.tasks.forEach((task)=>{
+            let events = schedulerData.events.filter((el)=>el.taskid == task.id);
+            task.events = events;
+        });
+
         const url = 'http://10.218.107.216:5000/validate';
         fetch(url, {
             method: 'POST',
@@ -128,7 +134,12 @@ class Basic extends Component{
             body: JSON.stringify(sessionobject)
         })
         .then(response => response.json())
-        .then(data => {console.log(data)})
+        .then(data => {
+            console.log(data);
+            this.setState({
+                alert:`You have a message from the planner: {`+data['output']+`}`
+            })        
+        })
         .catch(function(error) {
           console.log(error);
         });   

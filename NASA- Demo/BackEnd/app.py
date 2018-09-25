@@ -75,7 +75,7 @@ def get_explanations():
     explanations = planner.get_explanations(ui_to_pddl_actions(request, is_get_request=True))
     return jsonify(explanations)
 
-def main(host='127.0.0.1'):
+def main(host='10.218.107.216'):
     app.run(host=host,
             port=5000,
             debug=True)

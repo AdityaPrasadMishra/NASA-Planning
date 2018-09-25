@@ -17,6 +17,7 @@ Enter Task Details
 </h3>
 <div className="bigmodal__body">
 <AddTaskDetails 
+defaultSelectSlot = {props.defaultSelectSlot}
 handleTaskEnterClick ={props.handleTaskEnterClick}
 handleTaskCancelClick={props.handleTaskCancelClick}></AddTaskDetails>
 </div>

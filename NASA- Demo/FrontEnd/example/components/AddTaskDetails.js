@@ -4,12 +4,45 @@ import Scheduler, {SchedulerData, ViewTypes, DATE_FORMAT, DemoData} from '../../
 export default class AddTaskDetails extends React.Component{
       constructor(props){
         super(props);
+        let typeofeventsdemo = DemoData.typeofevents;
+        //console.log(typeofeventsdemo);
+        const typeofevents = typeofeventsdemo.map(function(row) {         
+            return { value : row.id, label : row.name }
+         })
+
+
+         let resourcesdemo = DemoData.resources;
+         const resources = resourcesdemo.map(function(row) {          
+            return { value : row.id, label : row.name }
+          })
+
+          const resourcesSelected = (resourceOption) => {
+            return resources.filter((filterOption) =>
+              filterOption.value == resourceOption);
+          }; 
+       
+          //Have to repeat code for default scenario To Do change it later
+          const defaultval = resourcesSelected(this.props.defaultSelectSlot);
+
+          let resourcesdemo2 = DemoData.resources;
+          const resourcesSelected2 = (resourceOption) => {
+              return resourcesdemo2.filter((filterOption) =>
+                filterOption.id == resourceOption.value);
+            };
+  
+          const typeofResourcesSelected =[];
+          
+          defaultval.forEach(function(selectedCrew) {
+              typeofResourcesSelected.push(resourcesSelected2(selectedCrew)[0]);
+            });
         this.state={
             error : undefined,
-            selectedCrewOption:null,
+            selectedCrewOption:defaultval,
             selectedTaskOption:null,
             typeofEventsSelected:null,
-            crewSelected:null
+            crewSelected:typeofResourcesSelected,
+            resources:resources,
+            typeofevents:typeofevents,
 
         }
         }
@@ -17,29 +50,29 @@ export default class AddTaskDetails extends React.Component{
         handleAddTaskOption=(e)=>{
             e.preventDefault();
             const taskActualName = e.target.elements.taskName.value.trim();
-            console.log(this.state.typeofEventsSelected);
-            console.log(this.state.crewSelected);
-
+//The Taskobject for each task -> Require to understand the differecnce between event and tasks
             let taskobject = {
                 taskName:null,
                 taskType:null,
-                taskCrew:null
+                taskCrew:null,
+                id:0,
+                events:[]
             }
 
             taskobject.taskName = taskActualName;
-            taskobject.tasktype = this.state.typeofEventsSelected;
-            taskobject.crewSelected = this.state.crewSelected;
-            console.log("submit form")
-            //const error = this.props.handleTaskOption(option);
-            const error ="no error";
+            taskobject.taskType = this.state.typeofEventsSelected;
+            taskobject.taskCrew = this.state.crewSelected;
+            //console.log("submit form")
+            const error = this.props.handleTaskEnterClick(taskobject);
            this.setState(() => ({error}))
            if(!error)
            {
-            e.target.elements.option.value =''
+           // e.target.elements.option.value =''
            }
         }
 
     handleCrewChange = (selectedCrewOption) => {
+        //console.log(selectedCrewOption);
         //Making sure the objects are in their old format
         let resourcesdemo = DemoData.resources;
         const resourcesSelected = (resourceOption) => {
@@ -53,12 +86,14 @@ export default class AddTaskDetails extends React.Component{
             typeofResourcesSelected.push(resourcesSelected(selectedCrew)[0]);
           });
 
+        //console.log(typeofResourcesSelected);
         this.setState({ 
             selectedCrewOption:selectedCrewOption,
-            crewSelected:typeofResourcesSelected
+            crewSelected:typeofResourcesSelected,
+            onetimework:true
         
         });        
-        console.log(`Option selected:`, selectedCrewOption);
+        //console.log(`Option selected:`, selectedCrewOption);
         }
 
     
@@ -76,21 +111,11 @@ export default class AddTaskDetails extends React.Component{
             typeofEventsSelected:typeofEventsSelected
         
         });
-        console.log(`Option selected:`, selectedTaskOption);
+        //console.log(typeofEventsSelected);
+        //console.log(`Option selected:`, selectedTaskOption);
         }
 
     render(){
-        let typeofeventsdemo = DemoData.typeofevents;
-        const typeofevents = typeofeventsdemo.map(function(row) {         
-            return { value : row.id, label : row.name }
-         })
-
-
-         let resourcesdemo = DemoData.resources;
-         const resources = resourcesdemo.map(function(row) {          
-            return { value : row.id, label : row.name }
-          })
-
         return(
             <div>
             <form  className="addtask" onSubmit={this.handleAddTaskOption}>
@@ -106,7 +131,7 @@ export default class AddTaskDetails extends React.Component{
                 <Select name ="taskOption" 
                     value={this.state.selectedTaskOption}
                     onChange={this.handleTaskChange}
-                    options={typeofevents}
+                    options={this.state.typeofevents}
                     />
                     <br/>
                     <label>
@@ -115,12 +140,12 @@ export default class AddTaskDetails extends React.Component{
                     <Select name ="taskCrewMembers"
                     value={this.state.selectedCrewOption}
                     onChange={this.handleCrewChange}
-                    options={resources}
+                    options={this.state.resources}
                     isMulti
                     className="basic-multi-select"
                     classNamePrefix="select"
                     />
-                    <button type="submit" className="button" onClick={this.props.handleTaskEnterClick}>Submit</button>
+                    <button type="submit" className="button" >Submit</button>
                     <button type="button" className="button" onClick={this.props.handleTaskCancelClick}>No</button>
             </form>
 

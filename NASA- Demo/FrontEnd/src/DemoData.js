@@ -3,18 +3,22 @@ const DemoData = {
         {
             id:'Type00',
             name: 'Normal',
+            color:'purple'
         },
         {
             id:'Type01',
             name: 'Type01',
+            color:'red'
         },
         {
             id:'Type02',
             name: 'Type02',
+            color:'black'
         }, 
         {
             id:'Type03',
             name: 'Type03',
+            color:'green'
         }
 
     ],

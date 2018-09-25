@@ -1,0 +1,2 @@
+ '/media/data_mount_disk/Main/DropBoxNew/Dropbox (ASU)/NASA-Planning/NASA- Demo/BackEnd/plan_utils/ff' -p "/media/data_mount_disk/Main/DropBoxNew/Dropbox (ASU)/NASA-Planning/NASA- Demo/BackEnd/plan_utils/" -o domain.pddl -f problem.pddl|grep -E "[0-9]:"|awk -F: '{print $NF}'|sed 's/^ /(/'|sed 's/$/)/' > /tmp/test
+

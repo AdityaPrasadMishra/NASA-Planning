@@ -33,6 +33,7 @@ class Basic extends Component{
         },
         { getDateLabelFunc: this.DateLabel});
         schedulerData.localeMoment.locale('en');
+        let sessionobject = null;
         this.state = {   
             // Stiore in the local DB.
             sessionstoredobject:{
@@ -43,7 +44,7 @@ class Basic extends Component{
             viewModel: schedulerData,
             confirm: '',
             alert:'',
-            newform:'Create a New Entry',
+            newform:'',
             confirmfunc : undefined,
             shouldupdate: false,
             // Created a local new event object to track the currently created task while confirm is being selected.
@@ -62,14 +63,12 @@ class Basic extends Component{
                         newEnd:undefined
                     }
         }
-
-
     }
 
     render(){
         let schedulerData1 = this.state.viewModel;
 
-        if(this.state.sessionstoredobject === undefined ||  this.state.sessionstoredobject.resources === undefined)
+        if(this.state.sessionstoredobject === undefined || this.state.sessionstoredobject == null || this.state.sessionstoredobject.resources === undefined)
         {
             schedulerData1.setResources(DemoData.resources);
             schedulerData1.setEvents(DemoData.events);
@@ -101,7 +100,7 @@ class Basic extends Component{
                     />
                 </div>
                 <div className="wrapper">
-                <button className="button"  >Validate</button>
+                <button className="button" onClick={(e)=>this.validateClick(this.state.sessionstoredobject,e)}>Validate</button>
                 <button className="button" >Suggest</button>
                                 
                 </div>
@@ -109,12 +108,32 @@ class Basic extends Component{
                 <OptionModalConfirm insText={this.state.confirm} handleClearAlertConfirmtextOkay={this.handleClearAlertConfirmtextOkay} handleClearAlertConfirmtextCancel={this.handleClearAlertConfirmtextCancel}/>
                 <OptionModalEnterTaskDetails
                 insText={this.state.newform}
-                handleTaskEnterClick ={this.handleTaskEnterClick}
+                defaultSelectSlot ={this.state.newAndMoveEventProp.slotId}
+                handleTaskEnterClick ={this.newEventAfterConfirm}
                 handleTaskCancelClick={this.handleTaskCancelClick}></OptionModalEnterTaskDetails>
                 </div>
         )
     }
 
+    validateClick(sessionobject,e){
+        //console.log(JSON.stringify(sessionobject));
+        console.log("Clicked Validate");
+        const url = 'http://10.218.107.216:5000/validate';
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+            body: JSON.stringify(sessionobject)
+        })
+        .then(response => response.json())
+        .then(data => {console.log(data)})
+        .catch(function(error) {
+          console.log(error);
+        });   
+      
+    }
 
     //LifeCycle Events
     // Lifecycle component and is available in only class based component
@@ -123,7 +142,6 @@ class Basic extends Component{
         try{
       
             const json = JSON.parse(localStorage.getItem('sessionstoredobject'));
-            console.log(json)
             this.setState({                
                 sessionstoredobject: json
             })
@@ -141,13 +159,12 @@ class Basic extends Component{
     componentDidUpdate(prevProps, prevState){
         // if(prevState.options.length !== this.state.options.length)
         // {
-            if(this.state.shouldupdate){
+            if(this.state.shouldupdate){            
             const json = JSON.stringify(this.state.sessionstoredobject);
             localStorage.setItem('sessionstoredobject', json);
             this.setState({
                 shouldupdate :false
             })
-            console.log("did update")
         }
        // }
     }
@@ -240,7 +257,6 @@ class Basic extends Component{
 
     moveEventAfterConfirm = ()=> {        
         //Reassociating with the old object proerties.
-
         let schedulerData = this.state.viewModel;
         let slotId = this.state.newAndMoveEventProp.slotId;
         let slotName = this.state.newAndMoveEventProp.slotName;
@@ -249,7 +265,6 @@ class Basic extends Component{
         let event = this.state.newAndMoveEventProp.event;
         schedulerData.moveEvent(event, slotId, slotName, start, end);
         this.setState({
-
             shouldupdate:true,
             sessionstoredobject:{
                 resources: schedulerData.resources,
@@ -280,7 +295,7 @@ class Basic extends Component{
         })       
     }
 
-    newEventAfterConfirm = ()=> {        
+    newEventAfterConfirm = (taskObject)=> {        
         //Reassociating with the old object properties. - done
         // Todo -> The for each in each of the methods where changes are donw to evnst to check for other events in the task. 
         // Conflict to be checked for each of the tasks. 
@@ -291,7 +306,18 @@ class Basic extends Component{
         let end = this.state.newAndMoveEventProp.end;
         let type = this.state.newAndMoveEventProp.type;
         let item = this.state.newAndMoveEventProp.item;
+        
+        let newFreshTaskId = 0;
+        schedulerData.tasks.forEach((item) => {
+            if(item.id >= newFreshTaskId)
+                newFreshTaskId = item.id + 1;
+        });
 
+        taskObject.id = newFreshTaskId;
+        schedulerData.tasks.push(taskObject);
+
+        taskObject.taskCrew.forEach(
+            (ctr)=>{
         let newFreshId = 0;
             schedulerData.events.forEach((item) => {
                 if(item.id >= newFreshId)
@@ -300,13 +326,17 @@ class Basic extends Component{
 
             let newEvent = {
                 id: newFreshId,
-                title: 'Task ' + newFreshId,
+                title: taskObject.taskName,
                 start: start,
                 end: end,
-                resourceId: slotId,
-                bgColor: 'purple'
+                resourceId: ctr.id,
+                bgColor: taskObject.taskType.color,
+                taskid:taskObject.id
             }          
             schedulerData.addEvent(newEvent);
+            taskObject.events.push(newEvent);
+        }
+        )
             this.setState({                
                 viewModel: schedulerData,
                 shouldupdate:true,
@@ -317,7 +347,7 @@ class Basic extends Component{
                 }
 
             })
-           // this.render();
+           this.handleTaskCancelClick();
     }
 
     nextClick = (schedulerData)=> {
@@ -369,7 +399,10 @@ class Basic extends Component{
         let schedulerData = this.state.viewModel;
         let event = this.state.updateEventProp.event;
         let newStart = this.state.updateEventProp.newStart;
-        schedulerData.updateEventStart(event, newStart);
+        let task = schedulerData.tasks.filter((el)=>el.id == event.taskid)[0];
+        let events = schedulerData.events.filter((el)=>el.taskid == task.id);
+        schedulerData.updateEventsStart(events, newStart);
+        task.events = events;
 
         this.setState({
             
@@ -390,8 +423,7 @@ class Basic extends Component{
                         updateEventProp :{
                             event:event, 
                             newEnd:newEnd
-                        }
-                        
+                        }                        
                     })
     }
 
@@ -399,7 +431,10 @@ class Basic extends Component{
         let schedulerData = this.state.viewModel;
         let event = this.state.updateEventProp.event;
         let newEnd = this.state.updateEventProp.newEnd;
-        schedulerData.updateEventEnd(event, newEnd);
+        let task = schedulerData.tasks.filter((el)=>el.id == event.taskid)[0];
+        let events = schedulerData.events.filter((el)=>el.taskid == task.id);
+        schedulerData.updateEventsEnd(events,newEnd);
+        task.events = events;
 
         this.setState({            
             viewModel: schedulerData,
@@ -417,3 +452,21 @@ class Basic extends Component{
 
 export default withDragDropContext(Basic)
 
+
+//To Do - change this function to check conflicts in other cases
+
+// let hasConflict = false;
+// if (config.checkConflict) {
+//     let start = localeMoment(newStart),
+//         end = localeMoment(eventItem.end),
+//         slotId = schedulerData._getEventSlotId(eventItem);
+
+//     events.forEach((e) => {
+//         if (schedulerData._getEventSlotId(e) === slotId && e.id !== eventItem.id) {
+//             let eStart = localeMoment(e.start),
+//                 eEnd = localeMoment(e.end);
+//             if ((start >= eStart && start < eEnd) || (end > eStart && end <= eEnd) || (eStart >= start && eStart < end) || (eEnd > start && eEnd <= end))
+//                 hasConflict = true;
+//         }
+//     });
+// }

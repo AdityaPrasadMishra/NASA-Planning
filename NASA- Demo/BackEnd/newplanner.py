@@ -46,11 +46,28 @@ class NewPlanner():
 
             # Files for storing problem state as a json
             self.problem_state_json = './static/files/state.json'
+        
+        def run_planner(self, timeout='1000s'):
+            try:
+                cmd = self.CALL_FF + \
+                " -o %s -f %s |grep -E '[0-9]:'|awk -F: '{print $NF}'|sed 's/^ /(/'|sed 's/$/)/' > %s"% ("./plan_utils/domainver02.pddl", "./plan_utils/problem.pddl", "./plan_utils/suggestedplan")
+                print(cmd)
+                status_code = os.system(self.TIMEOUT_CALL + timeout + ' ' + cmd)
+                if status_code == self.TIMEOUT_CODE:
+                    print('[WARNING] Timeout occured')
+                    return False
+                return True
+            except Exception as e:
+                if hasattr(e, 'message'):
+                    print(e.message)
+                else:
+                    print(e)
+                return False
 
         def run_validate(self):
             try:
                 cmd = "./plan_utils/VAL/validate -v" + \
-                    ' {} {} {}'.format("./plan_utils/domain.pddl", "./plan_utils/problem.pddl", "./plan_utils/plan")
+                    ' {} {} {}'.format("./plan_utils/domainver02.pddl", "./plan_utils/problem.pddl", "./plan_utils/plan")
                 proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
                 (out, err) = proc.communicate()
                 print('[DEBUG] Running command: {}'.format(cmd))
@@ -59,4 +76,5 @@ class NewPlanner():
                 return out
             except BaseException:
                 print(
-                    '[ERROR] Failed to execute VAL with the given files:\ndomain:{}\nproblem:{}\nobservation:{}'.format("./plan_utils/domain.pddl", "./plan_utils/problem.pddl", "./plan_utils/plan"))
+                    '[ERROR] Failed to execute VAL with the given files:\ndomain:{}\nproblem:{}\nobservation:{}'
+                    .format("./plan_utils/domain.pddl", "./plan_utils/problem.pddl", "./plan_utils/plan"))

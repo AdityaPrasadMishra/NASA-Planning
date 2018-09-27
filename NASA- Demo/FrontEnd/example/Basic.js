@@ -47,6 +47,7 @@ class Basic extends Component{
             newform:'',
             confirmfunc : undefined,
             shouldupdate: false,
+            error:false,
             // Created a local new event object to track the currently created task while confirm is being selected.
             newAndMoveEventProp :{
                         slotId:undefined,
@@ -101,7 +102,7 @@ class Basic extends Component{
                 </div>
                 <div className="wrapper">
                 <button className="button" onClick={(e)=>this.validateClick(this.state.sessionstoredobject,e)}>Validate</button>
-                <button className="button" >Suggest</button>
+                <button className="button" onClick={(e)=>this.suggestClick(e)}>Suggest</button>
                                 
                 </div>
                 <OptionModalAlert insText={this.state.alert} handleClearAlertConfirmtext={this.handleClearAlertConfirmtext}/>
@@ -123,7 +124,7 @@ class Basic extends Component{
             let events = schedulerData.events.filter((el)=>el.taskid == task.id);
             task.events = events;
         });
-
+        console.log(sessionobject)
         const url = 'http://10.218.107.216:5000/validate';
         fetch(url, {
             method: 'POST',
@@ -135,10 +136,47 @@ class Basic extends Component{
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data);
+            console.log(data['error']);
+
             this.setState({
-                alert:`You have a message from the planner: {`+data['output']+`}`
+                alert:`You have a message : \n{`+data['output']+`}`,
+                error:data['error']
             })        
+        })
+        .catch(function(error) {
+          console.log(error);
+        });   
+      
+    }
+
+    suggestClick(e){
+        localStorage.clear();
+        //console.log(JSON.stringify(sessionobject));
+        console.log("Clicked Suggest");
+        let schedulerData = this.state.viewModel;
+        const url = 'http://10.218.107.216:5000/suggest';
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+            body: JSON.stringify(DemoData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            let sessionobject ={
+                resources:DemoData.resources,
+                events:data.events,
+                tasks:data.taskobject,
+            }
+            this.setState({
+                viewModel: schedulerData,
+                sessionstoredobject:sessionobject
+            })  
+            const json = JSON.stringify(sessionobject);
+            localStorage.setItem('sessionstoredobject', json);      
         })
         .catch(function(error) {
           console.log(error);
@@ -153,6 +191,7 @@ class Basic extends Component{
         try{
       
             const json = JSON.parse(localStorage.getItem('sessionstoredobject'));
+            console.log(json)
             this.setState({                
                 sessionstoredobject: json
             })
@@ -195,7 +234,15 @@ class Basic extends Component{
         let titleText = schedulerData.behaviors.getEventTextFunc(schedulerData, event);
         if(!!event.type){
             borderColor = event.type == 1 ? 'rgba(0,139,236,1)' : (event.type == 3 ? 'rgba(245,60,43,1)' : '#999');
-            backgroundColor = event.type == 1 ? '#80C5F6' : (event.type == 3 ? '#FA9E95' : '#D9D9D9');
+            if(this.state.error)
+            {
+                console.log("herered");
+                backgroundColor = 'red';
+            }
+            else
+            {
+                backgroundColor = event.type == 1 ? '#80C5F6' : (event.type == 3 ? '#FA9E95' : '#D9D9D9');
+            }
         }
         let divStyle = {borderLeft: borderWidth + 'px solid ' + borderColor, backgroundColor: backgroundColor, height: mustBeHeight };
         if(!!agendaMaxEventWidth)

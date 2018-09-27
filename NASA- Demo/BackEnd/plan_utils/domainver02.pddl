@@ -76,23 +76,17 @@
 
 ;;)
 
+
 (:action cleanrrecentlyusedtaskone
-	:parameters()
-	:precondition(and(useforincreasingthecbustvalue)(<(revecountcannotbeusedtill)4)(>(cannotbeusedtill)0))
-	:effect(and(increase(revecountcannotbeusedtill)1)(decrease(cannotbeusedtill)1)(not(useforincreasingthecbustvalue)))
+	:parameters(?crmem - crew)
+	:precondition(and(=(revecountcannotbeusedtill)4))
+	:effect(and(not(recentlyused ?crmem)))
 
 )
 
 (:action cleanrrecentlyusedtasktwo
-	:parameters(?crmem - crew)
-	:precondition(and(=(revecountcannotbeusedtill)4)(<(cannotbeusedtill)4))
-	:effect(and(not(recentlyused ?crmem))(increase(cannotbeusedtill)1))
-
-)
-
-(:action cleanrrecentlyusedtaskthree
 	:parameters()
-	:precondition(and(=(cannotbeusedtill)4)(=(revecountcannotbeusedtill)4))
+	:precondition(and(=(revecountcannotbeusedtill)4))
 	:effect(and(decrease(revecountcannotbeusedtill)4))
 )
 
@@ -126,7 +120,6 @@
 	(not(activitycompleted ?wrt))
 	(not(activityinprogress))
 	(typeofactivitytype01 ?wrt)
-	(not(activitycompleted  ?wrt ))
 	(not(blocked_location ?loc))
 	(not(latch_open)))
 	
@@ -147,7 +140,6 @@
 	(not(activitycompleted ?wrt))
 	(not(activityinprogress))
 	(typeofactivitytype02 ?wrt)
-	(not(activitycompleted  ?wrt ))
 	(not(blocked_location ?loc))
 	(not(latch_open)))
 	
@@ -219,7 +211,7 @@
 	:effect (and
 				(not(assign_crewmember ?crmem ?wrt))
 				(not(busy_crewmember ?crmem))
-				(useforincreasingthecbustvalue)
+				(increase(revecountcannotbeusedtill)1)
 				(decrease(number_of_crew_members ?wrt)1)
 				(recentlyused ?crmem)
 				)

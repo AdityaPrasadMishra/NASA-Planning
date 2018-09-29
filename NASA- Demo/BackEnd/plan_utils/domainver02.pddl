@@ -27,6 +27,7 @@
 	(typeofactivitynormal  ?actvar - activity)
 	(typeofactivitytype01 ?actvar - activity)
 	(typeofactivitytype02 ?actvar - activity)
+	(typeofactivitytakephoto ?actvar - activity)
 	(inordercrew ?crew1 - crew ?crew2 - crew)	
 	(currentcrewmember ?crew - crew)
 	(cannotassigncrew ?wrt - activity)
@@ -66,11 +67,11 @@
 	:precondition (and(not(daystarted)))
 	:effect (and(daystarted))
 )
-(:action close_latch
-    :parameters ()
-    :precondition (and(not (daystarted)))
-    :effect (and (not(latch_open)))
-)
+;; (:action close_latch
+;;     :parameters ()
+;;     :precondition (and(not (daystarted)))
+;;     :effect (and (not(latch_open)))
+;; )
 
 ;;(:action cleanrrecentlyusedtaskone 
 ;;	:parameters(?wrt - activity)
@@ -151,6 +152,27 @@
 	:effect(and
 	(activityinprogress)
 	(blocked_location ?loc)
+        ;;(not(useonlyonceforcleanup))
+	(activated_activity_forloc ?wrt ?loc)
+	(activated_activity_forcrew ?wrt))
+)
+
+(:action starting_activity_takephoto
+	:parameters (?wrt - activity ?loc - location )
+	
+	:precondition(and
+	(daystarted)	
+	;;(useonlyonceforcleanup)
+	(not(activitycompleted ?wrt))
+	(not(activityinprogress))
+	(typeofactivitytakephoto ?wrt)
+	(not(blocked_location ?loc))
+	(latch_open))
+	
+	:effect(and
+	(activityinprogress)
+	(blocked_location ?loc)
+	(not(latch_open))
         ;;(not(useonlyonceforcleanup))
 	(activated_activity_forloc ?wrt ?loc)
 	(activated_activity_forcrew ?wrt))

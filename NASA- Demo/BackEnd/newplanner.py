@@ -83,17 +83,29 @@ class NewPlanner():
         
         def run_explanations(self):
             try:
-                cmd = "python Explainer.py -s ME -m '/media/data_mount_disk/Main/DropBoxNew/Dropbox (ASU)/NASA-Planning/NASA- Demo/Explanations/Current/JSON_Models/DomaininJSONPlanner.json'"
+                cmd ="cd '/media/data_mount_disk/Main/DropBoxNew/Dropbox (ASU)/NASA-Planning/NASA- Demo/Explanations/DEEPSPACE_MMP/mmp/src/' &&"
+                cmd += "python '/media/data_mount_disk/Main/DropBoxNew/Dropbox (ASU)/NASA-Planning/NASA- Demo/Explanations/DEEPSPACE_MMP/mmp/src/Explainer.py' -s ME -m '/media/data_mount_disk/Main/DropBoxNew/Dropbox (ASU)/NASA-Planning/NASA- Demo/Explanations/Current/JSON_Models/DomaininJSONPlanner.json'"
                 cmd += " -n '/media/data_mount_disk/Main/DropBoxNew/Dropbox (ASU)/NASA-Planning/NASA- Demo/Explanations/Current/JSON_Models/DomaininJSONHuman.json'"
                 cmd += " -t '/media/data_mount_disk/Main/DropBoxNew/Dropbox (ASU)/NASA-Planning/NASA- Demo/Explanations/Current/PDDL_Models/domain_templ.pddl'"
                 cmd += " -p '/media/data_mount_disk/Main/DropBoxNew/Dropbox (ASU)/NASA-Planning/NASA- Demo/BackEnd/plan_utils/problem.pddl'" 
                 cmd += " -r '/media/data_mount_disk/Main/DropBoxNew/Dropbox (ASU)/NASA-Planning/NASA- Demo/BackEnd/plan_utils/problem.pddl'" 
-                cmd += "-f '/media/data_mount_disk/Main/DropBoxNew/Dropbox (ASU)/NASA-Planning/NASA- Demo/Explanations/Test plan/plan'"
+                #cmd += "-f '/media/data_mount_disk/Main/DropBoxNew/Dropbox (ASU)/NASA-Planning/NASA- Demo/Explanations/Test plan/plan'"
+                cmd += ' | grep "Explanation >> "'
+                
                 proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
                 (out, err) = proc.communicate()
                 print('[DEBUG] Running command: {}'.format(cmd))
                 print('[DEBUG] Output of Validate: {}'.format(out))
                 print('[DEBUG] Output of Validate Error: {}'.format(err))
+                outarr =out.split("Explanation >> ")
+                print(outarr)
+                
+                out = "<br/>".join(outarr)
+                return out 
+                # with open('/media/data_mount_disk/Main/DropBoxNew/Dropbox (ASU)/NASA-Planning/NASA- Demo/Explanations/DEEPSPACE_MMP/mmp/src/exp.dat') as f:
+                #     exps = f.read()
+                # return exps
+
             except Exception as e:
                 if hasattr(e, 'message'):
                     print(e.message)

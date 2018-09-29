@@ -49,16 +49,7 @@
           [{"daystarted":[]}]
         }]}
         ]},
-                {"close_latch":[
-        {"parameters" :[]},
-        {"precondition":[{"not":
-          [{"daystarted":[]}]
-          
-        }]},
-        {"effect":[{"not":
-          [{"latch_open":[]}]
-        }]}
-        ]},
+                
         
         
         {"starting_activity_normal":[
@@ -148,6 +139,36 @@
             }
             ]}
           ]},
+          {"starting_activity_takephoto":[
+            {"parameters" :["?wrt - activity" ,"?loc - location"]},
+            {"precondition" :[{"pos":
+              [
+                {"daystarted":[]},
+                {"typeofactivitytakephoto":["?wrt"]},
+                {"latch_open":[]}
+              ]
+            },
+            
+              {"not":
+                [
+                  {"activitycompleted" :["?wrt"]},
+                  {"activityinprogress":[]},
+                  {"blocked_location":["?loc"]}
+                ]
+              }
+            ]},
+            {"effect":[
+              {"not":[{"latch_open":[]}]},
+              {"pos":
+                [
+                  {"blocked_location" :["?loc"]},
+                  {"activityinprogress":[]},
+                  {"activated_activity_forloc":["?wrt","?loc"]},
+                  {"activated_activity_forcrew":["?wrt"]}
+                ]
+              }
+              ]}
+            ]},
 
         {"cleanrrecentlyusedtaskone":[
         {"parameters" :["?crmem - crew"]},

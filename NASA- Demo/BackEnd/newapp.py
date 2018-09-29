@@ -29,7 +29,7 @@ def validate():
         sessionObject = request.json
         print(sessionObject)
         planstring = "(CLOSE_LATCH)\n"
-        planstring += "(STARTING_DAY)\n"
+        planstring = "(STARTING_DAY)\n"
         rutaskcounter = 0
         for task in sessionObject['tasks']:
             print(task['taskName'])
@@ -69,16 +69,16 @@ def validate():
                 out = out.split("Failed plans:")[0].strip()
             
             if '(complete_day) has an unsatisfied precondition' in out:
-                out = " Sorry but your day schedule is incomplete, You ought to schedule your task till 7 PM for all Crew members."
+                out = "Invalid Plan: Please schedule tasks till 7 p.m. for all crew members."
             
             if 'Satisfy (number_of_crew_members' in out:
                 if '(max_crewmember_for_activity' in out:
                     taskname = out.split('(max_crewmember_for_activity ')[1].split(')')[0]
                     number = out.split('(max_crewmember_for_activity ')[1].split(')')[1].split('=')[1].split(']')[0]
-                    out = "Sorry, but you have insufficient number of person for the task " + taskname.upper() +".\nPlease enter the right number of people i.e " + number +"."
+                    out = "Invalid Plan: Insufficient number of crew members for the task " + taskname.upper() +".<br/>Needs " + number +" crew members."
             
             if 'Successful plans:' in out and 'Plan valid' in out:
-                out = "Hurray!!! No Problems in Validate"
+                out = "Valid Plan!"
 
 
             return jsonify({"output":out,"error":False})

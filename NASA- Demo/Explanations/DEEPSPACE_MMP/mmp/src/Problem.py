@@ -39,7 +39,7 @@ class Problem:
         write_domain_file_from_state(original_prob_map, self.domainTemplate, orig_dom_file)
         #exit(0)
         if not robotPlanFile:
-            self.robotPlanFile   = '../domain/cache_plan.dat'
+            self.robotPlanFile   = '/media/data_mount_disk/Main/DropBoxNew/Dropbox (ASU)/NASA-Planning/NASA- Demo/Explanations/DEEPSPACE_MMP/mmp/domain/cache_plan.dat'
             self.plan, self.cost = get_plan(orig_dom_file, robotProblemFile)
 
             with open(self.robotPlanFile, 'w') as plan_file:
@@ -58,7 +58,7 @@ class Problem:
 
 
 
-        self.groundedRobotPlanFile   = '../domain/cache_grounded_plan.dat'
+        self.groundedRobotPlanFile   = '/media/data_mount_disk/Main/DropBoxNew/Dropbox (ASU)/NASA-Planning/NASA- Demo/Explanations/DEEPSPACE_MMP/mmp/domain/cache_grounded_plan.dat'
 
         with open(self.groundedRobotPlanFile, 'w') as plan_file:
             plan_file.write('\n'.join(['({})'.format(item) for item in self.plan]) + '\n; cost = {} (unit cost)'

@@ -24,6 +24,11 @@ const DemoData = {
             id:'Type04',
             name: 'ORDEREDACTIVITY',
             color:'green'
+        }, 
+        {
+            id:'Type05',
+            name: 'takephoto',
+            color:'green'
         }
 
     ],

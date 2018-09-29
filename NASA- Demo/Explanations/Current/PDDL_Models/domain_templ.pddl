@@ -27,6 +27,7 @@
 	(typeofactivitynormal  ?actvar - activity)
 	(typeofactivitytype01 ?actvar - activity)
 	(typeofactivitytype02 ?actvar - activity)
+	(typeofactivitytakephoto ?actvar - activity)
 	(inordercrew ?crew1 - crew ?crew2 - crew)	
 	(currentcrewmember ?crew - crew)
 	(cannotassigncrew ?wrt - activity)

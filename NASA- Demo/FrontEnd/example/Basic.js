@@ -48,6 +48,7 @@ class Basic extends Component{
             confirmfunc : undefined,
             shouldupdate: false,
             error:false,
+            explain:false,
             // Created a local new event object to track the currently created task while confirm is being selected.
             newAndMoveEventProp :{
                         slotId:undefined,
@@ -100,12 +101,18 @@ class Basic extends Component{
                                eventItemTemplateResolver={this.eventItemTemplateResolver}
                     />
                 </div>
-                <div className="wrapper">
-                <button className="button" onClick={(e)=>this.validateClick(this.state.sessionstoredobject,e)}>Validate</button>
-                <button className="button" onClick={(e)=>this.suggestClick(e)}>Suggest</button>                                
+                <div className="container">
+                    <div className="row justify-content-md-center">
+                        <button className="btn col-sm-3" onClick={(e)=>this.validateClick(this.state.sessionstoredobject,e)}>Validate</button>            
+                        &nbsp;&nbsp;&nbsp;
+                        <button className="btn col-sm-3" onClick={(e)=>this.suggestClick(e)}>Suggest</button>                                
+                    </div>
                 </div>
-                <div className="wrapper">
-                <button className="expbutton" onClick={(e)=>this.explainClick(e)}>Explain</button>
+                <br></br>
+                <div className="container">
+                    <div className="row justify-content-md-center">
+                        <button className="btn btn-secondary col-sm-6 expbutton" onClick={(e)=>this.explainClick(e)}>Explain</button>
+                    </div>
                 </div>
                 <OptionModalAlert insText={this.state.alert} handleClearAlertConfirmtext={this.handleClearAlertConfirmtext}/>
                 <OptionModalConfirm insText={this.state.confirm} handleClearAlertConfirmtextOkay={this.handleClearAlertConfirmtextOkay} handleClearAlertConfirmtextCancel={this.handleClearAlertConfirmtextCancel}/>
@@ -141,14 +148,39 @@ class Basic extends Component{
             console.log(data['error']);
 
             this.setState({
-                alert:`You have a message : \n{`+data['output']+`}`,
-                error:data['error']
+                alert : data['output'],
+                error : data['error']
             })        
         })
         .catch(function(error) {
           console.log(error);
         });   
       
+    }
+
+    explainClick(e){
+        console.log("Explain Clicked");
+        const url = 'http://10.218.107.216:5000/explain';
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+
+            this.setState({
+                alert:data['output'],
+                error:data['error']
+            })        
+        })
+        .catch(function(error) {
+          console.log(error);
+        });   
+
     }
 
     suggestClick(e){

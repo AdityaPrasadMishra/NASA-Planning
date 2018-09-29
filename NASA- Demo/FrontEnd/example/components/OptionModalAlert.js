@@ -3,17 +3,14 @@ import Modal from 'react-modal';
 
 const OptionModalAlert = (props) => (
 <Modal isOpen={!!props.insText} 
-contentLabel={props.insText}
-onRequestClose={props.handleClearAlertConfirmtext}
-closeTimeoutMS={200}
-className="modal"
-appElement={document.getElementById('app')}
->
-<h3 className="modal__title">
-Alert
-</h3>
-{props.insText && <p className="modal__body">{props.insText}</p>}
-<button className="button" onClick={props.handleClearAlertConfirmtext}>Okay</button>
+    contentLabel={props.insText}
+    onRequestClose={props.handleClearAlertConfirmtext}
+    closeTimeoutMS={200}
+    className="modal_x card text-dark"
+    appElement={document.getElementById('app')}
+    >
+    {props.insText && <div className="modal__body card-body" dangerouslySetInnerHTML={{__html: props.insText}}/>}
+    <button className="btn btn-info" onClick={props.handleClearAlertConfirmtext}>Okay</button>
 </Modal>
     
 

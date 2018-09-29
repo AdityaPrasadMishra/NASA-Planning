@@ -1,8 +1,10 @@
 .big-button{
-    background: $purple;
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #2e6da4;
+    //background: $purple;
     border:none;
     border-bottom: .6rem solid darken($purple, 10%);
-    color:white;
     font-weight: bold;
     font-size: $l-size;
     margin-bottom: $m-size;
@@ -17,23 +19,14 @@
 
 //button
 .button{
-    background: $purple;
-    border-left : .1rem solid lighten($purple, 10%);
-    border-right : .1rem solid lighten($purple, 10%);
-    border-bottom: .3rem solid darken($purple, 10%);
-    color: white ;
-    font-weight: 500;
-    padding: $s-size; 
-    margin: $xs-size;
-}
-
-//button
-.expbutton{
-    background: silver;
-    border-left : .1rem solid lighten(grey, 10%);
-    border-right : .1rem solid lighten(grey, 10%);
-    border-bottom: .3rem solid darken(grey, 10%);
-    color: black;
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #2e6da4;
+    // background: $purple;
+    // border-left : .1rem solid lighten($purple, 10%);
+    // border-right : .1rem solid lighten($purple, 10%);
+    // border-bottom: .3rem solid darken($purple, 10%);
+    // color: white ;
     font-weight: 500;
     padding: $s-size; 
     margin: $xs-size;

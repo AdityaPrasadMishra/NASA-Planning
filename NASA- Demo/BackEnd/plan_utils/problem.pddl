@@ -2,7 +2,7 @@
 (:domain Nasa_strips_advanced_model_withSoftConstraints)
 (:objects
         CrewMember-1 CrewMember-2 CrewMember-3 CrewMember-4 - crew
-        breakfast breakfast2 normalwork1 normalwork2 dinner meditation sleep lunch loading unloading t1exercise t2exercise mutationexp xrayexp communication xrayexp2 communication2 takephoto repairshuttle repairshuttle2 repairshuttle3 repairshuttle01 repairshuttle02 repairshuttle03 massSpectrometry_room01 massSpectrometry_room02 massSpectrometry_room03 massSpectrometry_room04 Advanced_Diagnostic_Ultrasound_in_Microgravity APCF_Crystal_Growth CBTM CBTM2 CubeRRt CyclopsDemo - activity
+        breakfast breakfast2 normalwork1 normalwork2 dinner meditation sleep lunch loading unloading treadmill exercise_bike mutationexp xrayexp communication xrayexp2 communication2 takephoto repairshuttle repairshuttle2 repairshuttle3 repairshuttle01 repairshuttle02 repairshuttle03 massSpectrometry_room01 massSpectrometry_room02 massSpectrometry_room03 massSpectrometry_room04 Advanced_Diagnostic_Ultrasound_in_Microgravity APCF_Crystal_Growth CBTM CBTM2 CubeRRt CyclopsDemo - activity
         locA locB locC locD locE locF - location
 )
 (:init
@@ -25,8 +25,8 @@
     (=(number_of_crew_members lunch)0)
     (=(number_of_crew_members loading)0)
     (=(number_of_crew_members unloading)0)
-    (=(number_of_crew_members t1exercise)0)
-    (=(number_of_crew_members t2exercise)0)
+    (=(number_of_crew_members treadmill)0)
+    (=(number_of_crew_members exercise_bike)0)
     (=(number_of_crew_members takephoto)0)
     (=(number_of_crew_members repairshuttle)0)
     (=(number_of_crew_members repairshuttle2)0)
@@ -57,11 +57,11 @@
     ;;(=(max_crewmember_for_activity dinner)0)
     (=(max_crewmember_for_activity meditation)2)
     (=(max_crewmember_for_activity sleep)2)
-    (=(max_crewmember_for_activity lunch)4)
+    (=(max_crewmember_for_activity lunch)2)
     (=(max_crewmember_for_activity loading)2)
     (=(max_crewmember_for_activity unloading)2)
-    (=(max_crewmember_for_activity t1exercise)2)
-    (=(max_crewmember_for_activity t2exercise)2)
+    (=(max_crewmember_for_activity treadmill)1)
+    (=(max_crewmember_for_activity exercise_bike)1)
     (=(max_crewmember_for_activity takephoto)2)
     (=(max_crewmember_for_activity repairshuttle)2)
     (=(max_crewmember_for_activity repairshuttle2)2)
@@ -94,9 +94,9 @@
     (typeofactivitynormal lunch)
     (typeofactivitynormal loading)
     (typeofactivitynormal unloading)
-    (typeofactivitynormal t1exercise)
-    (typeofactivitynormal t2exercise)
-    (typeofactivitynormal takephoto)
+    (typeofactivitynormal treadmill)
+    (typeofactivitynormal exercise_bike)
+    (typeofactivitytakephoto takephoto)
     (typeofactivitynormal repairshuttle)
     (typeofactivitynormal repairshuttle01)
     (typeofactivitynormal xrayexp)
@@ -129,7 +129,7 @@
 )
 
 
-(:goal(and(daycompleted)(activitycompleted communication2)(activitycompleted CBTM)(activitycompleted CBTM2)(activitycompleted CubeRRt)(activitycompleted Advanced_Diagnostic_Ultrasound_in_Microgravity)
+(:goal(and(daycompleted)(activitycompleted communication2)(activitycompleted lunch)(activitycompleted CBTM)(activitycompleted CBTM2)(activitycompleted CubeRRt)(activitycompleted Advanced_Diagnostic_Ultrasound_in_Microgravity)(activitycompleted treadmill)
 )
 
 )

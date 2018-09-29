@@ -49,6 +49,8 @@ class Basic extends Component{
             shouldupdate: false,
             error:false,
             explain:false,
+            validcase:false,
+            invalidcase:false,
             // Created a local new event object to track the currently created task while confirm is being selected.
             newAndMoveEventProp :{
                         slotId:undefined,
@@ -111,10 +113,10 @@ class Basic extends Component{
                 <br></br>
                 <div className="container">
                     <div className="row justify-content-md-center">
-                        <button className="btn btn-secondary col-sm-6 expbutton" onClick={(e)=>this.explainClick(e)}>Explain</button>
+                        {this.state.explain && <button className="btn btn-secondary col-sm-6 expbutton" onClick={(e)=>this.explainClick(e)}>Explain</button>}
                     </div>
                 </div>
-                <OptionModalAlert insText={this.state.alert} handleClearAlertConfirmtext={this.handleClearAlertConfirmtext}/>
+                <OptionModalAlert validcase={this.state.validcase} invalidcase ={this.state.invalidcase} insText={this.state.alert} handleClearAlertConfirmtext={this.handleClearAlertConfirmtext}/>
                 <OptionModalConfirm insText={this.state.confirm} handleClearAlertConfirmtextOkay={this.handleClearAlertConfirmtextOkay} handleClearAlertConfirmtextCancel={this.handleClearAlertConfirmtextCancel}/>
                 <OptionModalEnterTaskDetails
                 insText={this.state.newform}
@@ -146,7 +148,18 @@ class Basic extends Component{
         .then(response => response.json())
         .then(data => {
             console.log(data['error']);
-
+            if(data['output'].indexOf("Invalid Plan") > -1)
+            {
+                this.setState({
+                invalidcase:true
+            })
+            }
+            else
+            {
+                this.setState({
+                    validcase:true
+                })
+            }
             this.setState({
                 alert : data['output'],
                 error : data['error']
@@ -173,8 +186,12 @@ class Basic extends Component{
             console.log(data);
 
             this.setState({
+                validcase:false,
+                invalidcase:false,
                 alert:data['output'],
-                error:data['error']
+                error:data['error'],
+                explain:false
+
             })        
         })
         .catch(function(error) {
@@ -207,7 +224,8 @@ class Basic extends Component{
             }
             this.setState({
                 viewModel: schedulerData,
-                sessionstoredobject:sessionobject
+                sessionstoredobject:sessionobject,
+                explain:true
             })  
             const json = JSON.stringify(sessionobject);
             localStorage.setItem('sessionstoredobject', json);      
@@ -258,6 +276,8 @@ class Basic extends Component{
     }
     conflictOccurred = (schedulerData, action, event) => {
         this.setState({
+            validcase:false,
+            invalidcase:false,
             alert:`Conflict occurred. {action: ${action}, event: ${event}`
         })
     }
@@ -289,6 +309,8 @@ class Basic extends Component{
     
     eventClicked = (schedulerData, event) => {
         this.setState({
+            validcase:false,
+            invalidcase:false,
             alert:`You just clicked an event: {id: ${event.id}, title: ${event.title}}`
         })
     };
@@ -305,6 +327,8 @@ class Basic extends Component{
         this.state.confirmfunc();
         this.setState({
             confirm: '',
+            validcase:false,
+            invalidcase:false,
             alert:'',
             confirmfunc:undefined
         });
@@ -313,6 +337,8 @@ class Basic extends Component{
     handleClearAlertConfirmtextCancel =(schedulerData, slotId, slotName, start, end, type, item) =>{
         this.setState({
             confirm: '',
+            validcase:false,
+            invalidcase:false,
             alert:'',
         });
     }

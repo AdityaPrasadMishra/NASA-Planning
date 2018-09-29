@@ -75,7 +75,7 @@ def validate():
                 if '(max_crewmember_for_activity' in out:
                     taskname = out.split('(max_crewmember_for_activity ')[1].split(')')[0]
                     number = out.split('(max_crewmember_for_activity ')[1].split(')')[1].split('=')[1].split(']')[0]
-                    out = "Invalid Plan: Insufficient number of crew members for the task " + taskname.upper() +".<br/>Needs " + number +" crew members."
+                    out = "Invalid Plan: Insufficient number of crew members for the task " + taskname.upper() +". Needs " + number +" crew members."
             
             if 'Successful plans:' in out and 'Plan valid' in out:
                 out = "Valid Plan!"

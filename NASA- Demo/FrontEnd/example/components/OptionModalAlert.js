@@ -10,7 +10,9 @@ const OptionModalAlert = (props) => (
     appElement={document.getElementById('app')}
     >
     {props.insText && <div className="modal__body card-body" dangerouslySetInnerHTML={{__html: props.insText}}/>}
-    <button className="btn btn-info" onClick={props.handleClearAlertConfirmtext}>Okay</button>
+    {!props.validcase && !props.invalidcase && <button className="btn btn-info" onClick={props.handleClearAlertConfirmtext}>Okay</button>}
+    {!props.invalidcase && props.validcase && <button className="btn btn-success" onClick={props.handleClearAlertConfirmtext}>Okay</button>}
+    {!props.validcase && props.invalidcase && <button className="btn btn-danger" onClick={props.handleClearAlertConfirmtext}>Okay</button>}
 </Modal>
     
 

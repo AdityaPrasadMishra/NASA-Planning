@@ -85,7 +85,7 @@ class Basic extends Component{
         return (
             <div className="container">
                 <div>
-                    <h3 style={{textAlign: 'center'}}>NASA Proactive Scheduler</h3>
+                    <h3 style={{textAlign: 'center'}}>DSG Crew Activity Scheduler</h3>
                     <Scheduler schedulerData={this.state.viewModel}
                                prevClick={this.prevClick}
                                nextClick={this.nextClick}
@@ -102,8 +102,10 @@ class Basic extends Component{
                 </div>
                 <div className="wrapper">
                 <button className="button" onClick={(e)=>this.validateClick(this.state.sessionstoredobject,e)}>Validate</button>
-                <button className="button" onClick={(e)=>this.suggestClick(e)}>Suggest</button>
-                                
+                <button className="button" onClick={(e)=>this.suggestClick(e)}>Suggest</button>                                
+                </div>
+                <div className="wrapper">
+                <button className="expbutton" onClick={(e)=>this.explainClick(e)}>Explain</button>
                 </div>
                 <OptionModalAlert insText={this.state.alert} handleClearAlertConfirmtext={this.handleClearAlertConfirmtext}/>
                 <OptionModalConfirm insText={this.state.confirm} handleClearAlertConfirmtextOkay={this.handleClearAlertConfirmtextOkay} handleClearAlertConfirmtextCancel={this.handleClearAlertConfirmtextCancel}/>

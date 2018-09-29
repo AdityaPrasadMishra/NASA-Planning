@@ -28,7 +28,8 @@ def validate():
         # print(request.json)
         sessionObject = request.json
         print(sessionObject)
-        planstring = "(STARTING_DAY)\n"
+        planstring = "(CLOSE_LATCH)\n"
+        planstring += "(STARTING_DAY)\n"
         rutaskcounter = 0
         for task in sessionObject['tasks']:
             print(task['taskName'])
@@ -56,6 +57,7 @@ def validate():
         text_file.write(planstring)
         text_file.close()
         out = planner.run_validate()
+        error = True
         #out = ''
         if out:
             if 'No matching action defined for' in out:
@@ -74,10 +76,21 @@ def validate():
                     taskname = out.split('(max_crewmember_for_activity ')[1].split(')')[0]
                     number = out.split('(max_crewmember_for_activity ')[1].split(')')[1].split('=')[1].split(']')[0]
                     out = "Sorry, but you have insufficient number of person for the task " + taskname.upper() +".\nPlease enter the right number of people i.e " + number +"."
+            
+            if 'Successful plans:' in out and 'Plan valid' in out:
+                out = "Hurray!!! No Problems in Validate"
 
-            return jsonify({"output":out,"error":True})
+
+            return jsonify({"output":out,"error":False})
         # print(out)
-    return jsonify({"output":"Hurray!!! No Problems in Validate","error":False})
+    return jsonify({"output":"Hurray!!! No Problems while validating the plan.","error":False})
+
+
+@app.route("/explain", methods=['GET', 'POST'])
+def explain():
+    if request.method == 'GET':
+        out = planner.run_explanations()
+        return jsonify({"output":out,"error":False})
 
 @app.route("/suggest", methods=['GET', 'POST'])
 def suggest():
@@ -123,6 +136,7 @@ def suggest():
                     a = sessionObject['typeofevents']
                     # print(a)
                     # print(planstr3)
+                    print(planstr)
                     task['taskType'] = filter(lambda x : x['name'].upper() == planstr3[2].upper(), a )[0]
                 else:
                     message +="The Plan is in an inconsistent state"
@@ -188,6 +202,7 @@ def suggest():
         finalobject =json.dumps(finalobject)     
         #print(finalobject)        
         return finalobject
+    
 
 
 

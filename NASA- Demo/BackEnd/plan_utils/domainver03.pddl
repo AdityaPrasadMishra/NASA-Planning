@@ -27,6 +27,8 @@
 	(typeofactivitynormal  ?actvar - activity)
 	(typeofactivitytype01 ?actvar - activity)
 	(typeofactivitytype02 ?actvar - activity)
+	(inorderactivity ?actvar1 - activity ?actvar2 - activity)
+	(typeofactivityorderedactivity ?actvar - activity)	
 	(inordercrew ?crew1 - crew ?crew2 - crew)	
 	(currentcrewmember ?crew - crew)
 	(cannotassigncrew ?wrt - activity)
@@ -36,6 +38,7 @@
 	(latch_open)
 	(activated_activity_forloc ?wrt - activity ?loc - location)
 	(activated_activity_forcrew ?wrt  - activity)
+	(ordered_activity ?wrt - activity)
 	(activitycompleted ?wrt - activity)
 	(activityinprogress)
 	(recentlyused ?crmem - crew)
@@ -52,7 +55,7 @@
 	(rem_time_today ?crmem - crew)
 	(number_of_crew_members ?wrt - activity)
 	(max_crewmember_for_activity ?wrt - activity)
-	(decreaseintime)
+	(decreaseintime ?wrt - activity)
 	(cannotbeusedtill)
 	(revecountcannotbeusedtill)
 )
@@ -65,11 +68,6 @@
 	:parameters ()
 	:precondition (and(not(daystarted)))
 	:effect (and(daystarted))
-)
-(:action close_latch
-    :parameters ()
-    :precondition (and(not (daystarted)))
-    :effect (and (not(latch_open)))
 )
 
 ;;(:action cleanrrecentlyusedtaskone 
@@ -156,6 +154,38 @@
 	(activated_activity_forcrew ?wrt))
 )
 
+(:action starting_activity_orderedactivity 
+	:parameters (?wrt - activity ?loc - location )
+	
+	:precondition(and
+	(daystarted)	
+	;;(useonlyonceforcleanup)
+	(not(activitycompleted ?wrt))
+	(not(activityinprogress))
+	(typeofactivityorderedactivity ?wrt)
+	(not(blocked_location ?loc))
+	(ordered_activity ?wrt)
+	(not(latch_open)))
+	
+	:effect(and
+	(activityinprogress)
+	(blocked_location ?loc)
+        ;;(not(useonlyonceforcleanup))
+	(activated_activity_forloc ?wrt ?loc)
+	(activated_activity_forcrew ?wrt))
+)
+
+(:action ordering_activity
+	:parameters (?wrt - activity ?wrt1 - activity )
+	:precondition(and(not(ordered_activity ?wrt))
+			(inorderactivity ?wrt1 ?wrt)
+			(activitycompleted ?wrt1))	
+	:effect(and(ordered_activity ?wrt))
+)
+
+
+
+
 (:action assigning_current_crew_member
 	:parameters(?crmem - crew ?crmem1 - crew)
 	:precondition(and(currentcrewmember ?crmem)
@@ -182,8 +212,8 @@
 	:effect(and
 		(assign_crewmember ?crmem ?wrt)	
 		(busy_crewmember ?crmem)
-		(decrease(rem_time_today ?crmem)(decreaseintime))
-		(decrease(rem_time_today_forall)(decreaseintime))
+		(decrease(rem_time_today ?crmem)(decreaseintime ?wrt))
+		(decrease(rem_time_today_forall)(decreaseintime ?wrt))
 		(increase(number_of_crew_members ?wrt)1)	
 		)
 )

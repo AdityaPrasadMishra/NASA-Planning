@@ -77,4 +77,26 @@ class NewPlanner():
             except BaseException:
                 print(
                     '[ERROR] Failed to execute VAL with the given files:\ndomain:{}\nproblem:{}\nobservation:{}'
-                    .format("./plan_utils/domain.pddl", "./plan_utils/problem.pddl", "./plan_utils/plan"))
+                    .format("./plan_utils/domainver02.pddl", "./plan_utils/problem.pddl", "./plan_utils/plan"))
+
+
+        
+        def run_explanations(self):
+            try:
+                cmd = "python Explainer.py -s ME -m '/media/data_mount_disk/Main/DropBoxNew/Dropbox (ASU)/NASA-Planning/NASA- Demo/Explanations/Current/JSON_Models/DomaininJSONPlanner.json'"
+                cmd += " -n '/media/data_mount_disk/Main/DropBoxNew/Dropbox (ASU)/NASA-Planning/NASA- Demo/Explanations/Current/JSON_Models/DomaininJSONHuman.json'"
+                cmd += " -t '/media/data_mount_disk/Main/DropBoxNew/Dropbox (ASU)/NASA-Planning/NASA- Demo/Explanations/Current/PDDL_Models/domain_templ.pddl'"
+                cmd += " -p '/media/data_mount_disk/Main/DropBoxNew/Dropbox (ASU)/NASA-Planning/NASA- Demo/BackEnd/plan_utils/problem.pddl'" 
+                cmd += " -r '/media/data_mount_disk/Main/DropBoxNew/Dropbox (ASU)/NASA-Planning/NASA- Demo/BackEnd/plan_utils/problem.pddl'" 
+                cmd += "-f '/media/data_mount_disk/Main/DropBoxNew/Dropbox (ASU)/NASA-Planning/NASA- Demo/Explanations/Test plan/plan'"
+                proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+                (out, err) = proc.communicate()
+                print('[DEBUG] Running command: {}'.format(cmd))
+                print('[DEBUG] Output of Validate: {}'.format(out))
+                print('[DEBUG] Output of Validate Error: {}'.format(err))
+            except Exception as e:
+                if hasattr(e, 'message'):
+                    print(e.message)
+                else:
+                    print(e)
+                return False

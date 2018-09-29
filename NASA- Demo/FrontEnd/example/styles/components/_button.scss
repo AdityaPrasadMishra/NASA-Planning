@@ -27,6 +27,18 @@
     margin: $xs-size;
 }
 
+//button
+.expbutton{
+    background: silver;
+    border-left : .1rem solid lighten(grey, 10%);
+    border-right : .1rem solid lighten(grey, 10%);
+    border-bottom: .3rem solid darken(grey, 10%);
+    color: black;
+    font-weight: 500;
+    padding: $s-size; 
+    margin: $xs-size;
+}
+
 
 .button--link{
 background: none;

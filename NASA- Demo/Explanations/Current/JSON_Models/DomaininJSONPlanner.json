@@ -1,0 +1,327 @@
+{
+  "domain":{
+    "define":"Nasa_strips_advanced_model_withSoftConstraints",
+    "types":{"objects":["crew",
+                        "activity",
+                        "location"]},   
+    "predicates":[
+    {"daystarted":[]},
+    {"daycompleted":[]},
+    {"assign_crewmember":["?crmem - crew","?wrt - activity"]},
+    {"deactivatingactivityforcrew":["?wrt - activity"]},
+    {"typeofactivitynormal":["?actvar - activity"]},
+    {"typeofactivitytype01":["?actvar - activity"]},
+    {"typeofactivitytype02":["?actvar - activity"]},
+  	{"inordercrew": ["?crew1 - crew", "?crew2 - crew"]},	
+  	{"currentcrewmember ": ["?crew - crew"]},
+  	{"cannotassigncrew": ["?wrt - activity"]},
+  	{"busy_crewmember ": ["?crew1 - crew"]},
+  	{"blocked_location": ["?loc - location"]},
+  	{"changelevel": ["?crew1 - crew"]},
+  	{"latch_open":[]},
+  	{"activated_activity_forloc": ["?wrt - activity", "?loc - location"]},
+  	{"activated_activity_forcrew": ["?wrt - activity"]},
+  	{"activitycompleted": ["?wrt - activity"]},
+  	{"activityinprogress":[]},
+    {"recentlyused": ["?crmem - crew"]},
+    {"useforincreasingthecbustvalue":[]}
+    ],
+    
+    "functions":[
+      	{"rem_time_today_forall":[]},
+	      {"rem_time_today" :["?crmem - crew"]},
+	      {"number_of_crew_members" :["?wrt - activity"]},
+	      {"max_crewmember_for_activity" :["?wrt - activity"]},
+        {"decreaseintime":[]},
+		    {"cannotbeusedtill":[]},
+    		{"revecountcannotbeusedtill":[]}
+      ],
+    
+    "actions":[
+        
+        {"starting_day":[
+        {"parameters" :[]},
+        {"precondition":[{"not":
+          [{"daystarted":[]}]
+          
+        }]},
+        {"effect":[{"pos":
+          [{"daystarted":[]}]
+        }]}
+        ]},
+                {"close_latch":[
+        {"parameters" :[]},
+        {"precondition":[{"not":
+          [{"daystarted":[]}]
+          
+        }]},
+        {"effect":[{"not":
+          [{"latch_open":[]}]
+        }]}
+        ]},
+        
+        
+        {"starting_activity_normal":[
+        {"parameters" :["?wrt - activity" ,"?loc - location"]},
+        {"precondition" :[{"pos":
+          [
+            {"daystarted":[]},
+            {"typeofactivitynormal":["?wrt"]}
+          ]         },
+        
+          {"not":
+            [
+              {"activitycompleted" :["?wrt"]},
+              {"activityinprogress":[]},
+              {"blocked_location":["?loc"]}
+            ]
+          }
+        ]},
+        {"effect":[
+          {"pos":
+            [
+              {"blocked_location" :["?loc"]},
+              {"activityinprogress":[]},
+              {"activated_activity_forloc":["?wrt","?loc"]},
+              {"activated_activity_forcrew":["?wrt"]}
+            ]
+          }
+          ]}
+        ]},
+        
+        
+        {"starting_activity_type01":[
+        {"parameters" :["?wrt - activity" ,"?loc - location"]},
+        {"precondition" :[{"pos":
+          [
+            {"daystarted":[]},
+            {"typeofactivitytype01":["?wrt"]}
+          ]
+        },
+        
+          {"not":
+            [
+              {"activitycompleted" :["?wrt"]},
+              {"activityinprogress":[]},
+              {"blocked_location":["?loc"]},
+              {"latch_open":[]}
+            ]
+          }
+        ]},
+        {"effect":[
+          {"pos":
+            [
+              {"blocked_location" :["?loc"]},
+              {"activityinprogress":[]},
+              {"activated_activity_forloc":["?wrt","?loc"]},
+              {"activated_activity_forcrew":["?wrt"]}
+            ]
+          }
+          ]}
+        ]},
+        {"starting_activity_type02":[
+          {"parameters" :["?wrt - activity" ,"?loc - location"]},
+          {"precondition" :[{"pos":
+            [
+              {"daystarted":[]},
+              {"typeofactivitytype02":["?wrt"]}
+            ]
+          },
+          
+            {"not":
+              [
+                {"activitycompleted" :["?wrt"]},
+                {"activityinprogress":[]},
+                {"blocked_location":["?loc"]},
+                {"latch_open":[]}
+              ]
+            }
+          ]},
+          {"effect":[
+            {"pos":
+              [
+                {"blocked_location" :["?loc"]},
+                {"activityinprogress":[]},
+                {"activated_activity_forloc":["?wrt","?loc"]},
+                {"activated_activity_forcrew":["?wrt"]}
+              ]
+            }
+            ]}
+          ]},
+
+        {"cleanrrecentlyusedtaskone":[
+        {"parameters" :["?crmem - crew"]},
+        {"precondition":[{"=":
+          [[{"revecountcannotbeusedtill" :[]},{"":[4]}]]
+          
+        }]},
+        {"effect":[{"not":
+          [{"recentlyused":["?crmem"]}]
+        }]}]},     
+        
+        {"cleanrrecentlyusedtasktwo":[
+          {"parameters" :[]},
+          {"precondition":[{"=":
+            [[{"revecountcannotbeusedtill" :[]},{"":[4]}]]
+            
+          }]},
+          {"effect":[{"decrease":[[{"revecountcannotbeusedtill" :[]},{"":[4]}]]
+            
+          }]}
+          ]},        
+        {"assigning_crew_members_activity":[
+        {"parameters" :["?wrt - activity", "?crmem - crew"]},
+        {"precondition":[
+          {"pos":
+          [
+            {"activated_activity_forcrew": ["?wrt"]}
+          ]
+        },{"not":
+        [
+          {"cannotassigncrew": ["?wrt"]},
+          {"recentlyused":["?crmem"]},
+          {"busy_crewmember":["?crmem"]}
+          ]
+        },
+        {
+          ">":
+          [
+            [{"rem_time_today" :["?crmem"]},{"":[0]}]
+          ]
+        },
+        {
+          "<":
+          [
+            [{"number_of_crew_members": ["?wrt"]},{"max_crewmember_for_activity" :["?wrt"]}]
+          ]
+        }]},
+        {"effect":[
+          {"pos":
+            [
+              {"assign_crewmember": ["?crmem", "?wrt"]},
+             {"busy_crewmember": ["?crmem"]}
+            ]
+          },
+          {
+            "not":[
+                {"currentcrewmember" :["?crmem"]}
+              ]
+          },
+          {
+            "decrease":[
+              [{"rem_time_today": ["?crmem"]},{"decreaseintime":[]}],
+              [{"rem_time_today_forall": []},{"decreaseintime":[]}]
+              ]
+          },
+          {
+            "increase":[
+              [{"number_of_crew_members": ["?wrt"]},{"":[1]}]
+              ]
+            }
+          ]}
+        ]},
+        {"free_location_after_assignment":[
+        {"parameters" :["?wrt - activity", "?loc - location"]},
+        {"precondition":[
+          {"pos":[{"activated_activity_forcrew":["?wrt"]},
+                  {"activated_activity_forloc": ["?wrt", "?loc"]},
+                  {"blocked_location": ["?loc"]}
+          ]},
+          {"=":[[{"number_of_crew_members":["?wrt"]},{"max_crewmember_for_activity" :["?wrt"]}]]}
+          ]},
+        {"effect":[{"pos":[
+          {"cannotassigncrew": ["?wrt"]},
+          {"deactivatingactivityforcrew" :["?wrt"]}
+          ]},
+        {"not":[
+          {"blocked_location": ["?loc"]},
+          {"activated_activity_forloc": ["?wrt" ,"?loc"]}
+          ]}
+        
+        ]}
+        ]},
+        {"free_individual_crew_members":[
+        {"parameters" :["?wrt - activity", "?crmem - crew"]},
+        {"precondition":[{"pos":[
+          {"deactivatingactivityforcrew": ["?wrt"]},
+						{"assign_crewmember": ["?crmem", "?wrt"]}
+          ]},
+        {">":
+        [
+        [{"number_of_crew_members" :["?wrt"]},{"":[0]}]  
+          ]}]},
+        {"effect":[
+          {"pos":[
+            {"recentlyused" :["?crmem"]}
+            ]
+          },
+          {"not":[
+            {"assign_crewmember" :["?crmem", "?wrt"]},
+            {"busy_crewmember" :["?crmem"]}
+
+            ]
+          },
+          {"decrease":
+            [
+              [{"number_of_crew_members" :["?wrt"]},{"":[1]}]
+            
+            ]
+          },
+          {"increase":
+            [
+              [{"revecountcannotbeusedtill" :[]},{"":[1]}]
+            
+            ]
+          }
+          ]}
+        ]},
+        {"complete_activity":[
+        {"parameters" :["?wrt - activity"]},
+        {"precondition":[{"pos":[
+          {"deactivatingactivityforcrew": ["?wrt"]},
+					{"activated_activity_forcrew": ["?wrt"]}
+          ]},
+        {"=":[
+          [{"number_of_crew_members": ["?wrt"]},{"":[0]}]
+          ]}]},
+        {"effect":[
+          {"pos":[
+            {"activitycompleted": ["?wrt"]}
+            ]},
+          {"not":[
+            {"activityinprogress":[]},
+            {"activated_activity_forcrew":["?wrt"]},
+            {"deactivatingactivityforcrew": ["?wrt"]}
+            ]}
+          ]}
+        ]},
+        {"complete_day":[
+        {"parameters" :[]},
+        {"precondition":[
+          {"pos":[
+            {"daystarted":[]}
+          ]},
+          {"not":[
+            {"activityinprogress":[]}
+            ]},
+          {"<=":[
+            [{"rem_time_today_forall":[]},{"":[0]}]
+            ]}
+          
+          ]},
+        {"effect":[
+          {"pos":[
+            {"daycompleted":[]}
+            ]},
+            {"not":[
+              {"daystarted":[]}
+              ]
+              
+            }
+          
+          ]}
+        ]}
+      ]
+  }
+}
+

@@ -41,7 +41,7 @@
 	(activityinprogress)
 	(recentlyused ?crmem - crew)
 	(useonlyonceforcleanup)
-        (useforincreasingthecbustvalue)
+    (useforincreasingthecbustvalue)
 )
 
 ;; =====

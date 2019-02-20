@@ -129,9 +129,10 @@
 )
 
 
-(:goal(and(daycompleted)(activitycompleted communication2)(activitycompleted lunch)(activitycompleted CBTM)(activitycompleted CBTM2)(activitycompleted CubeRRt)(activitycompleted Advanced_Diagnostic_Ultrasound_in_Microgravity)(activitycompleted treadmill)
+(:goal(and(daycompleted)(activitycompleted communication2)
 )
 
 )
 
 )
+;;(activitycompleted lunch)(activitycompleted CBTM)(activitycompleted CBTM2)(activitycompleted CubeRRt)(activitycompleted Advanced_Diagnostic_Ultrasound_in_Microgravity)(activitycompleted treadmill)

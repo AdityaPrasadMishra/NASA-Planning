@@ -25,14 +25,11 @@ def index():
 def validate():
     if request.method == 'POST':
         print("in post")
-        # print(request.json)
         sessionObject = request.json
-        print(sessionObject)
         planstring = "(CLOSE_LATCH)\n"
         planstring = "(STARTING_DAY)\n"
         rutaskcounter = 0
         for task in sessionObject['tasks']:
-            print(task['taskName'])
             planstring+=("(STARTING_ACTIVITY_"+task['taskType']['name'] +" "+task['taskName']+" LOCF" +")\n").upper()
             for ct in range(len(task['taskCrew'])):
                 planstring +=("(ASSIGNING_CREW_MEMBERS_ACTIVITY "+task['taskName']+" "+task["taskCrew"][ct]["name"]+")\n").upper()
@@ -51,7 +48,6 @@ def validate():
                 #     planstring+=("(CLEANRRECENTLYUSEDTASKTWO "+task["taskCrew"][ct]["name"]+")\n").upper()
                 planstring+="(CLEANRRECENTLYUSEDTASKTWO)\n".upper()
                 rutaskcounter = 0
-        print(planstring)
         planstring+="(COMPLETE_DAY)"
         text_file = open("./plan_utils/plan", "w")
         text_file.write(planstring)
@@ -91,6 +87,159 @@ def explain():
     if request.method == 'GET':
         out = planner.run_explanations()
         return jsonify({"output":out,"error":False})
+
+@app.route("/partialsuggest", methods=['GET', 'POST'])
+def partialsuggest():
+    if request.method == 'POST':
+        print("in Partial Suggest")
+        sessionObject = request.json
+        planstring = "(CLOSE_LATCH)\n"
+        planstring = "(STARTING_DAY)\n"
+        rutaskcounter = 0
+        for task in sessionObject['tasks']:
+            planstring+=("(STARTING_ACTIVITY_"+task['taskType']['name'] +" "+task['taskName']+" LOCF" +")\n").upper()
+            for ct in range(len(task['taskCrew'])):
+                planstring +=("(ASSIGNING_CREW_MEMBERS_ACTIVITY "+task['taskName']+" "+task["taskCrew"][ct]["name"]+")\n").upper()
+            planstring+=("(FREE_LOCATION_AFTER_ASSIGNMENT "+task['taskName']+" LOCF)\n").upper()
+            for ct in range(len(task['taskCrew'])):
+                planstring+= ("(FREE_INDIVIDUAL_CREW_MEMBERS "+task['taskName']+" "+task["taskCrew"][ct]["name"]+")\n").upper()
+                rutaskcounter+=1
+            planstring+=("(COMPLETE_ACTIVITY "+task['taskName']+")\n").upper()
+            if rutaskcounter==4:
+                gini = 1 
+                for ct in range(4):
+                    planstring+= ("(CLEANRRECENTLYUSEDTASKONE "+"CrewMember-"+str(gini)+")\n").upper()
+                    gini+=1
+
+                # for ct in range(len(task['taskCrew'])):
+                #     planstring+=("(CLEANRRECENTLYUSEDTASKTWO "+task["taskCrew"][ct]["name"]+")\n").upper()
+                planstring+="(CLEANRRECENTLYUSEDTASKTWO)\n".upper()
+                rutaskcounter = 0
+        planstring+="(COMPLETE_DAY)"
+        print(planstring)
+        #exit(0)
+        text_file = open("../Explanations/DEEPSPACE_RADAR/better_than_pr2plan/src/partialplan", "w")
+        text_file.write(planstring)
+        text_file.close()
+        out = planner.run_partialsuggest()
+        print(out)
+        message =''
+        if out != "True":
+            print(out)
+            if out == "False":
+                message +="Planner Filed to execute"
+            else:
+                message +="Wrong Type Selected for type " + out.split("_")[2].split("'")[0]
+            finalobject = {}        
+            finalobject['message'] = message
+            finalobject =json.dumps(finalobject)     
+            #print(finalobject)        
+            return finalobject
+        
+        planstring =''
+        with open("completeplan") as text_file:
+            planstring =text_file.read()
+            print(planstring)
+        planstringarr = planstring.split(")\n")
+        starttime = 9
+        slotcheck = 0
+        tasks = []
+        events = []
+        events2 = []
+        taskidcount = 0
+        eventidcount = 1
+        activityStarted = False
+        currentDT = datetime.datetime.now()
+        strdate =  str(currentDT.strftime("%Y-%m-%d"))
+        changeintime = 2
+        message =''
+        onesidecheck = []
+        twosidecheck = []
+
+        for planstr in planstringarr:
+            if taskidcount ==0:
+                task = {}
+                taskidcount += 1
+                task['id'] = taskidcount
+                task['taskCrew'] = []
+                task['events'] = []
+            if STARTACTIVITY in planstr:                
+                if not activityStarted:
+                    activityStarted = True
+                    planstr2 = planstr.split(' ')
+                    planstr3 = planstr2[0].split('_')[2].split('OBS_SEQ')
+                    print(planstr3)
+                    planstr3 = planstr3[0].split('OBS')[0]
+                    task['taskName'] = planstr2[1]
+                    #print(sessionObject)
+                    a = sessionObject['demoData']['typeofevents']
+                    # print(a)
+                    # print(planstr3)
+                    print(planstr)
+                    print(planstr3)
+                    task['taskType'] = filter(lambda x : x['name'].upper() == planstr3.upper(), a )[0]
+                else:
+                    message +="The Plan is in an inconsistent state"
+                    break
+            
+            if 'taskName' in task and ASSIGNCREW.strip() in planstr and  task['taskName'] in planstr: 
+                planstr2 = planstr.split(' ')
+                a = sessionObject['resources']
+                taskCrew = filter(lambda x : x['name'].upper() == planstr2[2].upper(), a )[0]
+                task['taskCrew'].append(taskCrew)
+                if(slotcheck == 4):
+                    starttime += changeintime
+                    slotcheck = 0
+                newEvent = {}
+                newEvent['id']= str(eventidcount)
+                newEvent['title']= str(task['taskName'])
+                newEvent['start']= str(strdate + ' ' + str(starttime)+':00:00')
+                newEvent['end']= str(strdate + ' ' + str(starttime + changeintime)+':00:00')
+                newEvent['resourceId']= str(taskCrew['id'])
+                newEvent['bgColor'] = str(task['taskType']['color'])
+                newEvent['taskid']= str(taskidcount)
+                if not ("OBS_SEQ") in planstr:
+                    newEvent['tasknewadd'] = "True"
+                task['events'].append(newEvent)
+                events.append(newEvent)
+                events2.append(newEvent)
+                slotcheck += 1
+                eventidcount+=1
+                onesidecheck.append(taskCrew['name'].upper().strip())
+
+            if 'taskName' in task and FREECREW.strip() in planstr and task['taskName'] in planstr:
+                planstr2 = planstr.split(' ')
+                planstr4 = planstr2[2].split(')')
+                twosidecheck.append(planstr4[0])
+
+            if 'taskName' in task and COMPLETEACTIVITY.strip() in planstr and task['taskName'] in planstr: 
+                #print("coming here")
+                lenstrchk = 0
+                for stri in onesidecheck:
+                    if stri in twosidecheck:
+                        lenstrchk+=1
+                    else:
+                        print("Issue in Assignment of crew in the plan")
+                        message+="Issue in Assignment of crew in the plan "
+                        break
+                tasks.append(task)
+                task = {}
+                task['id'] = taskidcount
+                taskidcount += 1
+                task['taskCrew'] = []
+                task['events'] = []
+                activityStarted = False
+                onesidecheck = []
+                twosidecheck = []
+        finalobject = {}        
+        finalobject['taskobject'] = tasks
+        finalobject['message'] = message
+        finalobject['events'] = events
+        finalobject['events2'] = events2
+        finalobject =json.dumps(finalobject)     
+        #print(finalobject)        
+        return finalobject
+
 
 @app.route("/suggest", methods=['GET', 'POST'])
 def suggest():
@@ -178,8 +327,6 @@ def suggest():
                         lenstrchk+=1
                     else:
                         print("Issue in Assignment of crew in the plan")
-                        print(onesidecheck)
-                        print(twosidecheck)
                         message+="Issue in Assignment of crew in the plan "
                         break
                 tasks.append(task)
@@ -191,14 +338,11 @@ def suggest():
                 activityStarted = False
                 onesidecheck = []
                 twosidecheck = []
-        print(tasks)
-        print(message)
         finalobject = {}        
         finalobject['taskobject'] = tasks
         finalobject['message'] = message
         finalobject['events'] = events
         finalobject['events2'] = events2
-        print(finalobject)
         finalobject =json.dumps(finalobject)     
         #print(finalobject)        
         return finalobject

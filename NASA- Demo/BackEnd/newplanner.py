@@ -112,3 +112,38 @@ class NewPlanner():
                 else:
                     print(e)
                 return False
+
+        def run_partialsuggest(self, timeout='1000s'):
+            try:
+                explanationSrc = "../Explanations/DEEPSPACE_RADAR/better_than_pr2plan/src/"
+                cmd ="cd "+explanationSrc+" &&"
+                cmd += "python Compiler.py -m DomaininJSONPlanner.json -p ProbleminJSON.json -t domain_templ.pddl -r prob_templ.pddl -s newdomain.pddl -q newproblem.pddl -f partialplan"                
+                cmd += '|grep "Exception: "'
+                proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+                (out, err) = proc.communicate()
+                print('[DEBUG] Running command: {}'.format(cmd))
+                print('[DEBUG] Output of Validate: {}'.format(out))
+                print('[DEBUG] Output of Validate Error: {}'.format(err))
+                print(out)
+                if out != '':
+                    return out
+                #print(outarr)
+                cmd = explanationSrc+"ff -p "+explanationSrc+" -o newdomain.pddl -f newproblem.pddl" 
+                cmd += "|grep -E '[0-9]:'|awk -F: '{print $NF}'|sed 's/^ /(/'|sed 's/$/)/' > completeplan"
+                status_code = os.system(self.TIMEOUT_CALL + timeout + ' ' + cmd)
+                print("here01")
+                if status_code == self.TIMEOUT_CODE:
+                    print('[WARNING] Timeout occured')
+                    return "False"
+                return "True"
+    
+                # with open('/media/data_mount_disk/Main/DropBoxNew/Dropbox (ASU)/NASA-Planning/NASA- Demo/Explanations/DEEPSPACE_MMP/mmp/src/exp.dat') as f:
+                #     exps = f.read()
+                # return exps
+
+            except Exception as e:
+                if hasattr(e, 'message'):
+                    print(e.message)
+                else:
+                    print(e)
+                return "False"

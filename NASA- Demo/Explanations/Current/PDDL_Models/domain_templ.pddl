@@ -28,6 +28,8 @@
 	(typeofactivitytype01 ?actvar - activity)
 	(typeofactivitytype02 ?actvar - activity)
 	(typeofactivitytakephoto ?actvar - activity)
+	(typeofactivitytypeSpectrometry ?wrt - activity)
+	(typeofactivitytypeRearrangeSpectrometer ?wrt - activity)
 	(inordercrew ?crew1 - crew ?crew2 - crew)	
 	(currentcrewmember ?crew - crew)
 	(cannotassigncrew ?wrt - activity)
@@ -41,7 +43,8 @@
 	(activityinprogress)
 	(recentlyused ?crmem - crew)
 	(useonlyonceforcleanup)
-        (useforincreasingthecbustvalue)
+    (useforincreasingthecbustvalue)
+	(spectrometerarranged)
 {}
 )
 

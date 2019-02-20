@@ -118,7 +118,7 @@ export default class AddTaskDetails extends React.Component{
     render(){
         return(
             <div>
-            <form  className="addtask" onSubmit={this.handleAddTaskOption}>
+            <form className="addtask" onSubmit={this.handleAddTaskOption}>
                 <label>
                     Name Of The Task:&nbsp;&nbsp;
                     <input className="addtask__input" type="text" name="taskName" />
@@ -145,10 +145,13 @@ export default class AddTaskDetails extends React.Component{
                     className="basic-multi-select"
                     classNamePrefix="select"
                     />
-                    <button type="submit" className="button" >Submit</button>
-                    <button type="button" className="button" onClick={this.props.handleTaskCancelClick}>No</button>
+                    <br/>
+                    <div className="row justify-content-md-center">
+                    <button type="submit" className="btn col-sm-3" >Submit</button>
+                    &nbsp;&nbsp;
+                    <button type="button" className="btn col-sm-3" onClick={this.props.handleTaskCancelClick}>No</button>
+                    </div>
             </form>
-
 </div>
         )
     }

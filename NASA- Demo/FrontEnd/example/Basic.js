@@ -107,7 +107,7 @@ class Basic extends Component{
                     <div className="row justify-content-md-center">
                         <button className="btn col-sm-3" onClick={(e)=>this.validateClick(this.state.sessionstoredobject,e)}>Validate</button>            
                         &nbsp;&nbsp;&nbsp;
-                        <button className="btn col-sm-3" onClick={(e)=>this.suggestClick(e)}>Suggest</button>                                
+                        <button className="btn col-sm-3" onClick={(e)=>this.suggestClick(this.state.sessionstoredobject,e)}>Suggest</button>                                
                     </div>
                 </div>
                 <br></br>
@@ -171,7 +171,7 @@ class Basic extends Component{
       
     }
 
-    explainClick(e){
+    explainClick(sessionobject,e){
         console.log("Explain Clicked");
         const url = 'http://10.218.107.216:5000/explain';
         fetch(url, {
@@ -200,11 +200,13 @@ class Basic extends Component{
 
     }
 
-    suggestClick(e){
-        localStorage.clear();
+    suggestClick(sessionobject,e){
+        console.log(sessionobject)
         //console.log(JSON.stringify(sessionobject));
         console.log("Clicked Suggest");
         let schedulerData = this.state.viewModel;
+        if (schedulerData.events.length <= 0)
+        {
         const url = 'http://10.218.107.216:5000/suggest';
         fetch(url, {
             method: 'POST',
@@ -232,7 +234,55 @@ class Basic extends Component{
         })
         .catch(function(error) {
           console.log(error);
-        });   
+        });  
+    }
+    else
+    {
+        sessionobject.demoData =DemoData
+        console.log("doing partial suggest")
+        schedulerData.tasks.forEach((task)=>{
+            let events = schedulerData.events.filter((el)=>el.taskid == task.id);
+            task.events = events;
+        });
+        console.log(sessionobject)
+        const url = 'http://10.218.107.216:5000/partialsuggest';
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+            body: JSON.stringify(sessionobject)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if(typeof data.events !== "undefined") {
+                let sessionobject ={
+                    resources:DemoData.resources,
+                    events:data.events,
+                    tasks:data.taskobject,
+                }
+                this.setState({
+                    viewModel: schedulerData,
+                    sessionstoredobject:sessionobject,
+                    explain:true                    
+                })  
+                const json = JSON.stringify(sessionobject);
+                localStorage.setItem('sessionstoredobject', json);
+            }
+            else{
+                this.setState({
+                    invalidcase:true,
+                    alert : data['message']
+                })
+            }
+                  
+        })
+        .catch(function(error) {
+          console.log(error);
+        });  
+    } 
       
     }
 
@@ -272,6 +322,7 @@ class Basic extends Component{
     }
 
     componentWillUnmount(){
+        localStorage.clear();
         console.log('component will unmount');
     }
     conflictOccurred = (schedulerData, action, event) => {
@@ -286,6 +337,11 @@ class Basic extends Component{
         let borderWidth = isStart ? '4' : '0';
         let borderColor =  'rgba(0,139,236,1)', backgroundColor = '#80C5F6';
         let titleText = schedulerData.behaviors.getEventTextFunc(schedulerData, event);
+        //console.log(event)
+        if(event.tasknewadd=="True")
+        {
+            borderColor =  'rgba(225,20,20,1)'
+        }
         if(!!event.type){
             borderColor = event.type == 1 ? 'rgba(0,139,236,1)' : (event.type == 3 ? 'rgba(245,60,43,1)' : '#999');
             if(this.state.error)
@@ -295,9 +351,11 @@ class Basic extends Component{
             }
             else
             {
+
                 backgroundColor = event.type == 1 ? '#80C5F6' : (event.type == 3 ? '#FA9E95' : '#D9D9D9');
             }
         }
+        
         let divStyle = {borderLeft: borderWidth + 'px solid ' + borderColor, backgroundColor: backgroundColor, height: mustBeHeight };
         if(!!agendaMaxEventWidth)
             divStyle = {...divStyle, maxWidth: agendaMaxEventWidth};

@@ -37,38 +37,39 @@
     		{"revecountcannotbeusedtill":[]}
       ],
     
-    "actions":[
+    "actions":{
         
-        {"starting_day":[
-        {"parameters" :[]},
-        {"precondition":[{"not":
+        "starting_day":
+        {"parameters" :[],
+        "precondition":{"not":
           [{"daystarted":[]}]
           
-        }]},
-        {"effect":[{"pos":
+        },
+        "effect":{"pos":
           [{"daystarted":[]}]
-        }]}
-        ]},
-                
+        }}
+        ,
+            
         
         
-        {"starting_activity_normal":[
-        {"parameters" :["?wrt - activity" ,"?loc - location"]},
-        {"precondition" :[{"pos":
+        "starting_activity_normal":
+        {"parameters" :["?wrt - activity" ,"?loc - location"],
+        "precondition" :{
+          "pos":
           [
             {"daystarted":[]},
             {"typeofactivitynormal":["?wrt"]}
-          ]         },
+          ],
         
-          {"not":
+          "not":
             [
               {"activitycompleted" :["?wrt"]},
               {"activityinprogress":[]},
               {"blocked_location":["?loc"]}
             ]
           }
-        ]},
-        {"effect":[
+        ,
+        "effect":
           {"pos":
             [
               {"blocked_location" :["?loc"]},
@@ -77,49 +78,48 @@
               {"activated_activity_forcrew":["?wrt"]}
             ]
           }
-          ]}
-        ]},
-        
-        
-        {"starting_activity_type01":[
-        {"parameters" :["?wrt - activity" ,"?loc - location"]},
-        {"precondition" :[{"pos":
-          [
-            {"daystarted":[]},
-            {"typeofactivitytype01":["?wrt"]}
-          ]
+          
         },
-        
-          {"not":
+
+        "starting_activity_type01":
+          {"parameters" :["?wrt - activity" ,"?loc - location"],
+          "precondition" :{
+            "pos":
             [
-              {"activitycompleted" :["?wrt"]},
+              {"daystarted":[]},
+              {"typeofactivitytype01":["?wrt"]}
+            ],
+          
+            "not":
+              [
+                {"activitycompleted" :["?wrt"]},
               {"activityinprogress":[]},
-              {"blocked_location":["?loc"]},
-              {"latch_open":[]}
-            ]
-          }
-        ]},
-        {"effect":[
-          {"pos":
-            [
-              {"blocked_location" :["?loc"]},
+              {"latch_open":[]},
+              {"blocked_location":["?loc"]}
+              ]
+            }
+          ,
+          "effect":
+            {"pos":
+              [
+                {"blocked_location" :["?loc"]},
               {"activityinprogress":[]},
               {"activated_activity_forloc":["?wrt","?loc"]},
               {"activated_activity_forcrew":["?wrt"]}
-            ]
-          }
-          ]}
-        ]},
-        {"starting_activity_type02":[
-          {"parameters" :["?wrt - activity" ,"?loc - location"]},
-          {"precondition" :[{"pos":
+              ]
+            }
+            
+          },
+          "starting_activity_type02":
+          {"parameters" :["?wrt - activity" ,"?loc - location"],
+          "precondition" :{
+            "pos":
             [
               {"daystarted":[]},
               {"typeofactivitytype02":["?wrt"]}
-            ]
-          },
+            ],
           
-            {"not":
+            "not":
               [
                 {"activitycompleted" :["?wrt"]},
                 {"activityinprogress":[]},
@@ -127,8 +127,8 @@
                 {"latch_open":[]}
               ]
             }
-          ]},
-          {"effect":[
+          ,
+          "effect":
             {"pos":
               [
                 {"blocked_location" :["?loc"]},
@@ -137,212 +137,210 @@
                 {"activated_activity_forcrew":["?wrt"]}
               ]
             }
-            ]}
-          ]},
-          {"starting_activity_takephoto":[
-            {"parameters" :["?wrt - activity" ,"?loc - location"]},
-            {"precondition" :[{"pos":
-              [
-                {"daystarted":[]},
-                {"typeofactivitytakephoto":["?wrt"]},
-                {"latch_open":[]}
-              ]
-            },
             
-              {"not":
-                [
-                  {"activitycompleted" :["?wrt"]},
-                  {"activityinprogress":[]},
-                  {"blocked_location":["?loc"]}
-                ]
-              }
-            ]},
-            {"effect":[
-              {"not":[{"latch_open":[]}]},
-              {"pos":
-                [
-                  {"blocked_location" :["?loc"]},
-                  {"activityinprogress":[]},
-                  {"activated_activity_forloc":["?wrt","?loc"]},
-                  {"activated_activity_forcrew":["?wrt"]}
-                ]
-              }
-              ]}
-            ]},
+          }
+,
+"starting_activity_takephoto":
+{"parameters" :["?wrt - activity" ,"?loc - location"],
+"precondition" :{
+  "pos":
+  [
+    {"daystarted":[]},
+    {"typeofactivitytakephoto":["?wrt"]},
+    {"latch_open":[]}
+  ],
 
-        {"cleanrrecentlyusedtaskone":[
-        {"parameters" :["?crmem - crew"]},
-        {"precondition":[{"=":
+  "not":
+    [
+      {"activitycompleted" :["?wrt"]},
+      {"activityinprogress":[]},
+      {"blocked_location":["?loc"]}
+    ]
+  }
+,
+"effect":
+  {"not":[{"latch_open":[]}],
+    "pos":
+    [
+      {"blocked_location" :["?loc"]},
+      {"activityinprogress":[]},
+      {"activated_activity_forloc":["?wrt","?loc"]},
+      {"activated_activity_forcrew":["?wrt"]}
+    ]
+  }
+  
+},
+
+        "cleanrrecentlyusedtaskone":
+        {"parameters" :["?crmem - crew"],
+        "precondition":{"=":
           [[{"revecountcannotbeusedtill" :[]},{"":[4]}]]
           
-        }]},
-        {"effect":[{"not":
+        },
+        "effect":{"not":
           [{"recentlyused":["?crmem"]}]
-        }]}]},     
+        }},     
         
-        {"cleanrrecentlyusedtasktwo":[
-          {"parameters" :[]},
-          {"precondition":[{"=":
-            [[{"revecountcannotbeusedtill" :[]},{"":[4]}]]
-            
-          }]},
-          {"effect":[{"decrease":[[{"revecountcannotbeusedtill" :[]},{"":[4]}]]
-            
-          }]}
-          ]},        
-        {"assigning_crew_members_activity":[
-        {"parameters" :["?wrt - activity", "?crmem - crew"]},
-        {"precondition":[
-          {"pos":
+        "cleanrrecentlyusedtasktwo":
+        {
+        "parameters" :[],
+        "precondition":{"=":
+          [[{"revecountcannotbeusedtill" :[]},{"":[4]}]]
+          
+        },
+        "effect":{"decrease":[[{"revecountcannotbeusedtill" :[]},{"":[4]}]]
+          
+        }
+        }
+        ,
+        
+        "assigning_crew_members_activity":
+        {"parameters" :["?wrt - activity", "?crmem - crew"],
+        "precondition":{
+          "pos":
           [
             {"activated_activity_forcrew": ["?wrt"]}
-          ]
-        },{"not":
+          ],
+        "not":
         [
           {"cannotassigncrew": ["?wrt"]},
           {"recentlyused":["?crmem"]},
           {"busy_crewmember":["?crmem"]}
           ]
-        },
-        {
+        ,
           ">":
           [
             [{"rem_time_today" :["?crmem"]},{"":[0]}]
-          ]
-        },
-        {
+          ],
           "<":
           [
             [{"number_of_crew_members": ["?wrt"]},{"max_crewmember_for_activity" :["?wrt"]}]
           ]
-        }]},
-        {"effect":[
+        },
+        "effect":
           {"pos":
             [
               {"assign_crewmember": ["?crmem", "?wrt"]},
              {"busy_crewmember": ["?crmem"]}
             ]
-          },
-          {
+         ,
             "not":[
                 {"currentcrewmember" :["?crmem"]}
               ]
-          },
-          {
+        ,
             "decrease":[
               [{"rem_time_today": ["?crmem"]},{"decreaseintime":[]}],
               [{"rem_time_today_forall": []},{"decreaseintime":[]}]
               ]
-          },
-          {
+          ,
             "increase":[
               [{"number_of_crew_members": ["?wrt"]},{"":[1]}]
               ]
-            }
-          ]}
-        ]},
-        {"free_location_after_assignment":[
-        {"parameters" :["?wrt - activity", "?loc - location"]},
-        {"precondition":[
-          {"pos":[{"activated_activity_forcrew":["?wrt"]},
+            }}
+          
+        ,
+        "free_location_after_assignment":
+        {"parameters" :["?wrt - activity", "?loc - location"],
+        "precondition":{
+          "pos":[{"activated_activity_forcrew":["?wrt"]},
                   {"activated_activity_forloc": ["?wrt", "?loc"]},
                   {"blocked_location": ["?loc"]}
-          ]},
-          {"=":[[{"number_of_crew_members":["?wrt"]},{"max_crewmember_for_activity" :["?wrt"]}]]}
-          ]},
-        {"effect":[{"pos":[
+          ],
+          "=":[[{"number_of_crew_members":["?wrt"]},{"max_crewmember_for_activity" :["?wrt"]}]]
+        }
+        ,
+        "effect":{"pos":[
           {"cannotassigncrew": ["?wrt"]},
           {"deactivatingactivityforcrew" :["?wrt"]}
-          ]},
-        {"not":[
+          ],
+          "not":[
           {"blocked_location": ["?loc"]},
           {"activated_activity_forloc": ["?wrt" ,"?loc"]}
           ]}
-        
-        ]}
-        ]},
-        {"free_individual_crew_members":[
-        {"parameters" :["?wrt - activity", "?crmem - crew"]},
-        {"precondition":[{"pos":[
+        }     
+        ,
+        "free_individual_crew_members":
+        {"parameters" :["?wrt - activity", "?crmem - crew"],
+        "precondition":{
+          "pos":[
           {"deactivatingactivityforcrew": ["?wrt"]},
 						{"assign_crewmember": ["?crmem", "?wrt"]}
-          ]},
-        {">":
+          ],
+          ">":
         [
         [{"number_of_crew_members" :["?wrt"]},{"":[0]}]  
-          ]}]},
-        {"effect":[
+          ]},
+        "effect":
           {"pos":[
             {"recentlyused" :["?crmem"]}
             ]
-          },
-          {"not":[
+          ,
+          "not":[
             {"assign_crewmember" :["?crmem", "?wrt"]},
             {"busy_crewmember" :["?crmem"]}
-
             ]
-          },
-          {"decrease":
+          ,
+          "decrease":
             [
               [{"number_of_crew_members" :["?wrt"]},{"":[1]}]
             
             ]
-          },
-          {"increase":
+          ,
+          "increase":
             [
               [{"revecountcannotbeusedtill" :[]},{"":[1]}]
             
             ]
+          
           }
-          ]}
-        ]},
-        {"complete_activity":[
-        {"parameters" :["?wrt - activity"]},
-        {"precondition":[{"pos":[
+        }
+        ,
+
+        "complete_activity":
+        {"parameters" :["?wrt - activity"],
+        "precondition":{"pos":[
           {"deactivatingactivityforcrew": ["?wrt"]},
-					{"activated_activity_forcrew": ["?wrt"]}
-          ]},
-        {"=":[
+                    {"activated_activity_forcrew": ["?wrt"]}
+          ],
+        "=":[
           [{"number_of_crew_members": ["?wrt"]},{"":[0]}]
-          ]}]},
-        {"effect":[
+          ]},
+        "effect":
           {"pos":[
             {"activitycompleted": ["?wrt"]}
-            ]},
-          {"not":[
+            ],
+          "not":[
             {"activityinprogress":[]},
             {"activated_activity_forcrew":["?wrt"]},
             {"deactivatingactivityforcrew": ["?wrt"]}
             ]}
-          ]}
-        ]},
-        {"complete_day":[
-        {"parameters" :[]},
-        {"precondition":[
+        },
+        "complete_day":
+        {"parameters" :[],
+        "precondition":
           {"pos":[
             {"daystarted":[]}
-          ]},
-          {"not":[
+          ],
+          "not":[
             {"activityinprogress":[]}
-            ]},
-          {"<=":[
+            ],
+          "<=":[
             [{"rem_time_today_forall":[]},{"":[0]}]
             ]}
-          
-          ]},
-        {"effect":[
+          ,
+        "effect":
           {"pos":[
             {"daycompleted":[]}
-            ]},
-            {"not":[
+            ],
+            "not":[
               {"daystarted":[]}
               ]
               
             }
           
-          ]}
-        ]}
-      ]
+        }
+          
+      }
   }
 }
 

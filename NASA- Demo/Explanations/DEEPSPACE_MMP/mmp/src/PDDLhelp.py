@@ -143,6 +143,8 @@ def read_state_from_domain_file(domainFileName, problemFileName):
     # type_list = 
 
     for act in domain_map["domain"]["actions"]:
+        print("Printing act")
+        print(act)
         act_name = list(act.keys())[0]
         print (act,act_name,act[act_name][0])
         for act_parts in act[act_name]:
